@@ -1,9 +1,10 @@
 {
   "ExpandedNodes": [
     "",
+    "\\0-1-inverse",
     "\\1-seasonWithPart",
     "\\1-seasonWithPart\\v0"
   ],
-  "SelectedNode": "\\1-seasonWithPart\\v0\\1-seasonWithPart-v0.js",
-  "PreviewInSolutionExplorer": false
+  "SelectedNode": "\\0-1-inverse\\0-1-inverse.txt",
+  "PreviewInSolutionExplorer": true
 }
