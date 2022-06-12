@@ -20,7 +20,7 @@ function playGame() {
     let proposedBoard = [];
     let responseBoard = [];
     let messageOut = "";
-    for (let i = 0; !found(responseBoard) && i < MOVES - 8; i++) {
+    for (let i = 0; !found(responseBoard) && i < MOVES; i++) {
         console.writeln(`--Adelante! ${intentos--} intentos restantes--`);
         let proposedCombination = getProposedCombination(COLORS);
         console.writeln(proposedCombination);
@@ -192,10 +192,6 @@ function playGame() {
             }
         }
         return combination;
-    }
-    function manual(count) {
-        showLegend(COLORS);
-        return console.readNumber(`introduce el color ${count}: `);
     }
     function random() {
         return parseInt(Math.random() * 6);
