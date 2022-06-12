@@ -20,9 +20,9 @@ function playGame() {
     let proposedBoard = [];
     let responseBoard = [];
     let messageOut = "";
-    for (let i = 0; !found(responseBoard) && i < MOVES; i++) {
+    for (let i = 0; !found(responseBoard) && i < MOVES - 8; i++) {
         console.writeln(`--Adelante! ${intentos--} intentos restantes--`);
-        let proposedCombination = changeIndexToColors(getIndexCombination(manual));
+        let proposedCombination = getProposedCombination(COLORS);
         console.writeln(proposedCombination);
         const response = responseCombination(proposedCombination, SecretCombination);
         saveInBoard(proposedBoard, proposedCombination);
@@ -31,6 +31,69 @@ function playGame() {
         messageOut = winMessage(response);
     }
     console.writeln(messageOut);
+    function getProposedCombination(arrayColors) {
+        const COLORS = arrayColors;
+        let error;
+        let proposedArray = [];
+        do {
+            error = false;
+            console.writeln(`Los colores son ${COLORS}`)
+            let proposedString = console.readString(`Introduce 4 colores`)
+            error = checkLenght(proposedString);
+            if (!error) {
+                proposedArray = changeStringToArray(proposedString);
+            }
+            if (!error) {
+                error = checkRepeated(proposedArray);
+            }
+            if (!error) {
+                error = checkInvalidsColors(proposedArray, COLORS)
+            }
+        } while (error)
+        return proposedArray;
+        function checkInvalidsColors(proposedArray, arrayColors) {
+            let validColor = true;
+            const COLORS = arrayColors;
+            for (i = 0; validColor && i < proposedArray.length; i++) {
+                validColor = false;
+                for (j = 0; !validColor && j < COLORS.length; j++) {
+                    validColor = proposedArray[i] === COLORS[j];
+                }
+            }
+            if (!validColor) {
+                console.writeln(`Error, color desconocido.`);
+            }
+            return !validColor;
+        }
+        function checkRepeated(proposedArray) {
+            let repeated = false;
+            for (i = 0; !repeated && i < proposedArray.length; i++) {
+                for (j = i + 1; !repeated && j <= proposedArray.length; j++) {
+                    repeated = proposedArray[i] === proposedArray[j];
+                }
+            }
+            if (repeated) {
+                console.writeln(`Error, colores repetidos.`);
+            }
+            return repeated;
+        }
+        function changeStringToArray(string) {
+            const COMBINATIONLENGTH = 4;
+            let proposedArray = [];
+            for (i = 0; i < COMBINATIONLENGTH; i++) {
+                proposedArray[i] = string.charAt(i);
+            }
+            return proposedArray;
+        }
+        function checkLenght(string) {
+            const COMBINATIONLENGTH = 4;
+            let error = string.length != COMBINATIONLENGTH;
+            if (error) {
+                console.writeln(`Error, cantidad de colores incorrecta.`);
+            }
+            return error;
+        }
+    }
     function found(board) {
         let result = true;
         if (board.length == 0) {
