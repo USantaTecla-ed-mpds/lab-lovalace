@@ -14,15 +14,18 @@ function isResumed() {
 }
 function playGame() {
     const COLORS = ["r", "g", "y", "b", "m", "c"]
-    const SecretCombination = changeIndexToColors(getIndexCombination(random));
+    const COLORSLENGTH=COLORS.length;
+    const COMBINATIONLENGTH=4;
+    const SecretCombination = changeIndexToColors(getIndexCombination(random,COMBINATIONLENGTH, COLORSLENGTH));
     const MOVES = 10;
     let intentos = MOVES;
     let proposedBoard = [];
     let responseBoard = [];
     let messageOut = "";
+  
     for (let i = 0; !found(responseBoard) && i < MOVES; i++) {
         console.writeln(`--Adelante! ${intentos--} intentos restantes--`);
-        let proposedCombination = getProposedCombination(COLORS);
+        let proposedCombination = getProposedCombination(COLORS, COMBINATIONLENGTH);
         console.writeln(proposedCombination);
         const response = responseCombination(proposedCombination, SecretCombination);
         saveInBoard(proposedBoard, proposedCombination);
@@ -31,7 +34,7 @@ function playGame() {
         messageOut = winMessage(response);
     }
     console.writeln(messageOut);
-    function getProposedCombination(arrayColors) {
+    function getProposedCombination(arrayColors, COMBINATIONLENGTH) {
         const COLORS = arrayColors;
         let error;
         let proposedArray = [];
@@ -39,9 +42,9 @@ function playGame() {
             error = false;
             console.writeln(`Los colores son ${COLORS}`)
             let proposedString = console.readString(`Introduce 4 colores`)
-            error = checkLenght(proposedString);
+            error = checkLenght(proposedString, COMBINATIONLENGTH);
             if (!error) {
-                proposedArray = changeStringToArray(proposedString);
+                proposedArray = changeStringToArray(proposedString,COMBINATIONLENGTH);
             }
             if (!error) {
                 error = checkRepeated(proposedArray);
@@ -52,18 +55,18 @@ function playGame() {
         } while (error)
         return proposedArray;
         function checkInvalidsColors(proposedArray, arrayColors) {
-            let validColor = true;
+            let found = true;
             const COLORS = arrayColors;
-            for (i = 0; validColor && i < proposedArray.length; i++) {
-                validColor = false;
-                for (j = 0; !validColor && j < COLORS.length; j++) {
-                    validColor = proposedArray[i] === COLORS[j];
+            for (i = 0; found && i < proposedArray.length; i++) {
+                found = false;
+                for (j = 0; !found && j < COLORS.length; j++) {
+                    found = proposedArray[i] === COLORS[j];
                 }
             }
-            if (!validColor) {
+            if (!found) {
                 console.writeln(`Error, color desconocido.`);
             }
-            return !validColor;
+            return !found;
         }
         function checkRepeated(proposedArray) {
             let repeated = false;
@@ -77,16 +80,14 @@ function playGame() {
             }
             return repeated;
         }
-        function changeStringToArray(string) {
-            const COMBINATIONLENGTH = 4;
+        function changeStringToArray(string, COMBINATIONLENGTH) {
             let proposedArray = [];
             for (i = 0; i < COMBINATIONLENGTH; i++) {
                 proposedArray[i] = string.charAt(i);
             }
             return proposedArray;
         }
-        function checkLenght(string) {
-            const COMBINATIONLENGTH = 4;
+        function checkLenght(string, COMBINATIONLENGTH) {
             let error = string.length != COMBINATIONLENGTH;
             if (error) {
                 console.writeln(`Error, cantidad de colores incorrecta.`);
@@ -173,13 +174,11 @@ function playGame() {
         }
         console.writeln(message);
     }
-    function getIndexCombination(f) {
+    function getIndexCombination(f, COMBINATIONLENGTH, COLORSLength) {
         let combination = [];
-        const combinationLength = 4;
-        const COLORSLength = 6;
         let anIndexColor;
-        while (combination.length < combinationLength) {
-            anIndexColor = f(combination.length + 1);//lo llamo akiiii
+        while (combination.length < COMBINATIONLENGTH) {
+            anIndexColor = f(combination.length + 1);
             if (combination.length == 0 && anIndexColor >= 0 && anIndexColor < COLORSLength) {
                 combination[combination.length] = anIndexColor;
             }
