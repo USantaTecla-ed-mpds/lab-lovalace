@@ -160,20 +160,6 @@ function playGame() {
         }
         return response;
     }
-    function showLegend(arrayCol) {
-        const COLORS = arrayCol;
-        let message = ``;
-        for (let i in COLORS) {
-            let separator = ", "
-            if (i == COLORS.length - 2) {
-                separator = ` y `;
-            } else if (i == COLORS.length - 1) {
-                separator = "";
-            }
-            message += `${i} para ${COLORS[i]}${separator}`;
-        }
-        console.writeln(message);
-    }
     function getIndexCombination(f, COMBINATIONLENGTH, COLORSLength) {
         let combination = [];
         let anIndexColor;
