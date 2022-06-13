@@ -155,7 +155,7 @@ function playGame() {
         }
         for (j in secret) {
             if (secret[j] === proposed[j]) {
-                response[j] = "Negro";
+                response[j] = RESPONSECOLORS[2];
             }
         }
         return response;
