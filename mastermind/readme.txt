@@ -1,1 +1,2 @@
-
+--mastermind--sin revisar, en base a las normas del juego y no a los requerimientos, está aquí porque más adelante puede utilizarse alguna de sus funciones.
+--mastermindFinished--cambiar nombre a mastermindv0.1 cumple los requerimientos, revisado y modificado a fondo después de la corrección en publico, en la que no pasó la criba. 
