@@ -11,15 +11,16 @@ function isResumed() {
 function playGame() {
     const MOVES = 10;
     let game = initGame(MOVES);
-   getSecretCombination(game);
-do {
+    getSecretCombination(game);
+    do {
+        console.writeln(game.SECRET_COMBINATION);
         console.writeln(`--Adelante! ${game.attempts--} intentos restantes--`);
         getProposedCombination(game);
         game.proposedBoard[game.proposedBoard.length] = game.proposedCombination;
         printBoard(game);
-        messageOut = winMessage(game.proposedCombination, game.SECRET_COMBINATION);
+
     } while (!found(game["proposedCombination"], game["SECRET_COMBINATION"]) && game.attempts > 0)
-    console.writeln(messageOut);
+    writeEndGame(game.proposedCombination, game.SECRET_COMBINATION);
 
     function initGame(MOVES) {
         let object = {};
@@ -28,7 +29,6 @@ do {
         object.attempts = MOVES;
         object.proposedBoard = [];
         object.proposedCombination = [];
-        object.messageOut = "";
         return object;
     }
     function getSecretCombination(game) {
@@ -36,12 +36,12 @@ do {
         let indexColor;
         while (indexCombination.length < game.COMBINATION_LENGTH) {
             indexColor = parseInt(Math.random() * game.COLORS.length);
-            if (indexCombination.length == 0) {
+            if (indexCombination.length === 0) {
                 indexCombination[indexCombination.length] = indexColor;
             } else {
                 let repeated = false;
                 for (let i = 0; i < indexCombination.length; i++) {
-                    repeated ||= indexColor == indexCombination[i];
+                    repeated ||= indexColor === indexCombination[i];
                 }
                 if (!repeated) {
                     indexCombination[indexCombination.length] = indexColor;
@@ -86,7 +86,7 @@ do {
             }
         } while (error)
         game.proposedCombination = proposedArray;
-        
+
         function checkValidsColors(color, arrayColors) {
             let colorFound = false;
             for (let i = 0; !colorFound && i < arrayColors.length; i++) {
@@ -118,15 +118,15 @@ do {
         }
         return result;
     }
-    function winMessage(proposed, secret) {
+    function writeEndGame(proposed, secret) {
         let result = true;
         for (let i in proposed) {
             result &&= proposed[i] === secret[i];
         }
         if (result) {
-            return `has ganado!`;
+            console.writeln(`has ganado!`);
         } else {
-            return `has perdido, se acabaron los intentos`;
+            console.writeln(`has perdido, se acabaron los intentos`);
         }
     }
     function printBoard({ proposedBoard, SECRET_COMBINATION }) {
@@ -148,7 +148,7 @@ do {
             for (let proposedColor of proposed) {
                 let sameColor = false;
                 for (let secretColor of secret) {
-                    sameColor ||= proposedColor == secretColor;
+                    sameColor ||= proposedColor === secretColor;
                 }
                 if (sameColor) {
                     whitesAndBlacks++;
@@ -156,7 +156,7 @@ do {
             }
             let blacks = 0;
             for (let i in secret) {
-                if (secret[i] == proposed[i]) {
+                if (secret[i] === proposed[i]) {
                     blacks++;
                 }
             }
