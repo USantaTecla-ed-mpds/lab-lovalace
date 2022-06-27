@@ -26,7 +26,7 @@ function playMasterMind() {
       play: function () {
         this.start();
         do {
-          this.getValidProposedCombination();
+          this.setValidProposedCombination();
           this.rateProposedCombination();
           this.showBoard();
         } while (!this.isGameOver());
@@ -79,7 +79,7 @@ function playMasterMind() {
         }
         return stars;
       },
-      getValidProposedCombination: function () {
+      setValidProposedCombination: function () {
         let isWrongProposedCombination;
         do {
           this.proposedCombination = console.readString(
