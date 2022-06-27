@@ -12,7 +12,7 @@ function playMasterMind() {
   } while (continueDialog.isAffirmative());
 
   function initGame() {
-    return {
+    let game = {
       colors: `rgbcmy`,
       maxAttempts: 10,
       combinationLength: 4,
@@ -23,14 +23,6 @@ function playMasterMind() {
       isTheWinner: false,
       errorMessages: {},
 
-      play() {
-        this.start();
-        do {
-          this.setValidProposedCombination();
-          this.rateProposedCombination();
-          this.showBoard();
-        } while (!this.isGameOver());
-      },
       start() {
         this.generateSecretCombination();
         this.errorMessages = {
@@ -184,6 +176,21 @@ function playMasterMind() {
         }
       },
     };
+
+    return {
+      play() {
+        game.start();
+        do {
+          game.setValidProposedCombination();
+          game.rateProposedCombination();
+          game.showBoard();
+        } while (!game.isGameOver());
+      },
+    };
+  }
+
+  function initErrorHandling() {
+    return {};
   }
 
   function initYesNoDialog(question) {
