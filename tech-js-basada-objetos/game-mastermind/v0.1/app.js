@@ -12,7 +12,7 @@ function playMasterMind() {
   } while (continueDialog.isAffirmative());
 
   function initGame() {
-    let game = {
+    return {
       colors: `rgbcmy`,
       maxAttempts: 10,
       combinationLength: 4,
@@ -184,7 +184,6 @@ function playMasterMind() {
         }
       },
     };
-    return game;
   }
 
   function initYesNoDialog(question) {
