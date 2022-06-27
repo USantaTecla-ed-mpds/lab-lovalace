@@ -23,7 +23,7 @@ function playMasterMind() {
       isTheWinner: false,
       errorMessages: {},
 
-      play: function () {
+      play() {
         this.start();
         do {
           this.setValidProposedCombination();
@@ -31,7 +31,7 @@ function playMasterMind() {
           this.showBoard();
         } while (!this.isGameOver());
       },
-      start: function () {
+      start() {
         this.generateSecretCombination();
         this.errorMessages = {
           combinationLength: `-> Longitud incorrecta de la combinación propuesta, debe ser de ${this.secretCombination.length} caracteres.`,
@@ -41,7 +41,7 @@ function playMasterMind() {
         console.writeln(`\n----- MASTERMIND -----`);
         this.showBoard();
       },
-      generateSecretCombination: function () {
+      generateSecretCombination() {
         for (let i = 0; i < this.combinationLength; i++) {
           let randomColor;
           do {
@@ -55,7 +55,7 @@ function playMasterMind() {
           this.secretCombination += randomColor;
         }
       },
-      includesColor: function (colorsCombination, color) {
+      includesColor(colorsCombination, color) {
         for (let i = 0; i < colorsCombination.length; i++) {
           if (colorsCombination[i] === color) {
             return true;
@@ -63,7 +63,7 @@ function playMasterMind() {
         }
         return false;
       },
-      showBoard: function () {
+      showBoard() {
         console.writeln(
           `\n${
             this.totalAttempts
@@ -72,14 +72,14 @@ function playMasterMind() {
           }`
         );
       },
-      generateSecretCombinationStars: function () {
+      generateSecretCombinationStars() {
         let stars = "";
         for (let i = 0; i < this.secretCombination.length; i++) {
           stars += "*";
         }
         return stars;
       },
-      setValidProposedCombination: function () {
+      setValidProposedCombination() {
         let isWrongProposedCombination;
         do {
           this.proposedCombination = console.readString(
@@ -93,10 +93,10 @@ function playMasterMind() {
         } while (isWrongProposedCombination);
         this.increaseAttempts();
       },
-      increaseAttempts: function () {
+      increaseAttempts() {
         this.totalAttempts++;
       },
-      checkErrorsInProposedCombination: function () {
+      checkErrorsInProposedCombination() {
         let errors = [];
         if (!this.checkCombinationLength())
           errors[errors.length] = this.errorMessages.combinationLength;
@@ -106,12 +106,12 @@ function playMasterMind() {
           errors[errors.length] = this.errorMessages.validColors;
         return errors;
       },
-      checkCombinationLength: function () {
+      checkCombinationLength() {
         return (
           this.proposedCombination.length === this.secretCombination.length
         );
       },
-      checkNoRepeatColorInCombination: function () {
+      checkNoRepeatColorInCombination() {
         let isRepeatedColor = false;
         for (
           let i = 0;
@@ -129,7 +129,7 @@ function playMasterMind() {
         }
         return !isRepeatedColor;
       },
-      checkValidColorsInCombination: function () {
+      checkValidColorsInCombination() {
         for (let i = 0; i < this.proposedCombination.length; i++) {
           if (!this.includesColor(this.colors, this.proposedCombination[i])) {
             return false;
@@ -137,12 +137,12 @@ function playMasterMind() {
         }
         return true;
       },
-      showErrorMessages: function (errors) {
+      showErrorMessages(errors) {
         for (let i = 0; i < errors.length; i++) {
           console.writeln(errors[i]);
         }
       },
-      rateProposedCombination: function () {
+      rateProposedCombination() {
         let blackTokens = 0;
         let whiteTokens = 0;
         for (let i = 0; i < this.secretCombination.length; i++) {
@@ -162,11 +162,11 @@ function playMasterMind() {
         }
         this.updateBoardAttempts([blackTokens, whiteTokens]);
       },
-      updateBoardAttempts: function (scoreTokens) {
+      updateBoardAttempts(scoreTokens) {
         let [blackTokens, whiteTokens] = scoreTokens;
         this.boardAttempts += `\n${this.proposedCombination} --> ${blackTokens} negra(s) y ${whiteTokens} blanca(s)`;
       },
-      isGameOver: function () {
+      isGameOver() {
         if (this.isTheWinner || this.totalAttempts === this.maxAttempts) {
           this.proclaimWinnerOrLoser();
           return true;
@@ -174,7 +174,7 @@ function playMasterMind() {
           return false;
         }
       },
-      proclaimWinnerOrLoser: function () {
+      proclaimWinnerOrLoser() {
         if (this.isTheWinner) {
           console.writeln(`\n¡¡Has ganado!! ¡Enhorabuena!`);
         } else {
@@ -191,7 +191,7 @@ function playMasterMind() {
       question: question,
       answer: ``,
 
-      read: function () {
+      read() {
         let error = false;
         do {
           answer = console.readString(this.question);
@@ -202,11 +202,11 @@ function playMasterMind() {
         } while (error);
       },
 
-      isAffirmative: function () {
+      isAffirmative() {
         return answer === `s`;
       },
 
-      isNegative: function () {
+      isNegative() {
         return answer === `n`;
       },
     };
