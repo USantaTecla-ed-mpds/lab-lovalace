@@ -174,7 +174,7 @@ function playMasterMind() {
           return false;
         }
       },
-      proclaimWinnerOrLoser() {
+      proclaimWinnerOrLoser: function () {
         if (this.isTheWinner) {
           console.writeln(`\n¡¡Has ganado!! ¡Enhorabuena!`);
         } else {
