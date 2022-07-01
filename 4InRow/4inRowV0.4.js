@@ -1,37 +1,25 @@
 //board[fila][columna]--Alberto--
 const { Console } = require("console-mpds");
 const console = new Console();
-COL_AND_ROWS = 9;
-let panel = createPanel(COL_AND_ROWS);
-let player = createPlayer();
-let winner = createWinner();
-let reset = createReset();
+const ROWS_AND_COLUMNS=9;
 let askToContinue = () => console.readString(`quieres continuar? (y/n):`)[0] === "y";
 do {
-    reset.restart();
+    let panel = createPanel(ROWS_AND_COLUMNS);
+    let player = createPlayer();
+    let winner = createWinner();
+    panel.resetBoard();
     panel.showBoard(player);
     do {
         player.changeActivePlayer();
         player.chooseValidColumn(panel);
         player.insertToken(panel);
         panel.showBoard(player);
-        winner.win = winner.winGame(player, panel.board);
+        winner.winGame(player, panel.board);
         winner.filledBoard(player);
     } while (!winner.win && !winner.fullBoard)
     winner.endGameMessage(player);
 } while (askToContinue())
 
-function createReset() {
-    return {
-        restart: function () {
-            panel.resetBoard();
-            player.plays = 0;
-            player.GAME_MODE = player.setGameMode();
-            winner.win = false;
-            winner.fullBoard = false;
-        }
-    }
-}
 function createWinner() {
     return {
         MAX_TOKENS: 42,
@@ -50,22 +38,23 @@ function createWinner() {
         },
         winGame: function ({ plays, lastColumnInsert }, board) {
             if (plays < this.SHORTEST_WIN) {
-                return false;
+                this.win=false;
+            }else{
+                let row = board[0][lastColumnInsert];
+                let win;
+                win = checkVertical(board, lastColumnInsert, row);
+                if (!win) {
+                    win = checkHorizontal(board, lastColumnInsert, row);
+                }
+                if (!win) {
+                    win = checkDiagonalUp(board, lastColumnInsert, row);
+                }
+                if (!win) {
+                    win = checkDiagonalDown(board, lastColumnInsert, row);
+                }
+                this.win=win;
             }
-            let row = board[0][lastColumnInsert];
-            let win;
-   win = checkVertical(board, lastColumnInsert, row);
-            if (!win) {
-                win = checkHorizontal(board, lastColumnInsert, row);
-            }
-            if (!win) {
-                win = checkDiagonalUp(board, lastColumnInsert, row);
-            }
-            if (!win) {
-                win = checkDiagonalDown(board, lastColumnInsert, row);
-            }
-            return win;
-        },
+        }
     };
     function checkDiagonalDown(board, column, row) {
         let same = true;
@@ -159,7 +148,7 @@ function createWinner() {
 function createPlayer() {
     let returned = {
         plays: 0,
-        GAME_MODE: null,
+        GAME_MODE: setGameMode(),
         lastColumnInsert: 0,
         activePlayer: 0,
         changeActivePlayer: function () {
@@ -177,20 +166,20 @@ function createPlayer() {
         insertToken: function ({ board }) {
             board[0][this.lastColumnInsert]++;
             board[board[0][this.lastColumnInsert]][this.lastColumnInsert] = this.activePlayer;
-        },
-        setGameMode: function () {
-            const GAME_MODE_NAMES = ["Jugador contra Jugador", "Jugador contra Computador", "Computador contra Computador"];
-            let msg = (`\n----- 4inRow -----\ \n\nMODOS DE JUEGO`);
-            for (let i = 0; i < GAME_MODE_NAMES.length; i++) {
-                msg += `\n${i + 1}. ${GAME_MODE_NAMES[i]}`;
-            }
-            console.writeln(msg);
-            const index = console.readNumber(`Elige un modo de juego (1, 2 o 3): `) - 1;
-            return [[manual, manual], [manual, automatic], [automatic, automatic]][index];
         }
+
     };
     return returned;
-
+    function setGameMode() {
+        const GAME_MODE_NAMES = ["Jugador contra Jugador", "Jugador contra Computador", "Computador contra Computador"];
+        let msg = (`\n----- 4inRow -----\ \n\nMODOS DE JUEGO`);
+        for (let i = 0; i < GAME_MODE_NAMES.length; i++) {
+            msg += `\n${i + 1}. ${GAME_MODE_NAMES[i]}`;
+        }
+        console.writeln(msg);
+        const index = console.readNumber(`Elige un modo de juego (1, 2 o 3): `) - 1;
+        return [[manual, manual], [manual, automatic], [automatic, automatic]][index];
+    }
     function manual(playerActive) {
         return console.readNumber(`jugador ${playerActive}, Escoge una columna (1-7)`);
     }
@@ -199,12 +188,12 @@ function createPlayer() {
         return parseInt(Math.random() * MAX_COLUMN);
     }
 }
-function createPanel() {
+function createPanel(ROWS_AND_COLUMNS) {
     return {
-        COL_AND_ROWS: 9,
+        COL_AND_ROWS:ROWS_AND_COLUMNS,
         MAX_ROW: 7,
         MAX_COLUMN: 7,
-        board: makeBoard(),
+        board: makeBoard(ROWS_AND_COLUMNS),
         resetBoard: function () {
             const VALUES = [0, 1, 2, 3];
             const BORDER = 8;
@@ -220,7 +209,7 @@ function createPanel() {
                 }
             }
         },
-        showBoard: function () {
+        showBoard: function ({plays}) {
             let msg = "";
             for (let i = this.COL_AND_ROWS - 1; i >= 0; i--) {
                 for (let j = 0; j < this.COL_AND_ROWS; j++) {
@@ -228,14 +217,14 @@ function createPanel() {
                 }
                 msg += "\n";
             }
-            console.writeln(`${player.plays} jugadas`);
+            console.writeln(`${plays} jugadas`);
             console.writeln(msg);
         }
     };
-    function makeBoard() {
-        board = new Array(this.COL_AND_ROWS);
-        for (let i = 0; i < this.COL_AND_ROWS; i++) {
-            board[i] = new Array(this.COL_AND_ROWS);
+    function makeBoard(COL_AND_ROWS) {
+        board = new Array(COL_AND_ROWS);
+        for (let i = 0; i < COL_AND_ROWS; i++) {
+            board[i] = new Array(COL_AND_ROWS);
         }
         return board;
     }
