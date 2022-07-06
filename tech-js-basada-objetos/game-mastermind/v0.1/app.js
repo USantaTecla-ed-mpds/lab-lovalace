@@ -176,10 +176,10 @@ function playMasterMind() {
         }
       },
     };
+    game.start();
 
     return {
       play() {
-        game.start();
         do {
           game.setValidProposedCombination();
           game.rateProposedCombination();
@@ -187,10 +187,6 @@ function playMasterMind() {
         } while (!game.isGameOver());
       },
     };
-  }
-
-  function initErrorHandling() {
-    return {};
   }
 
   function initYesNoDialog(question) {
