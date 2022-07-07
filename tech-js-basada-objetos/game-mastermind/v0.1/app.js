@@ -12,7 +12,7 @@ function playMasterMind() {
   } while (continueDialog.isAffirmative());
 
   function initGame() {
-    let game = {
+    let that = {
       colors: `rgbcmy`,
       maxAttempts: 10,
       combinationLength: 4,
@@ -167,15 +167,15 @@ function playMasterMind() {
         }
       },
     };
-    game.start();
+    that.start();
 
     return {
       play() {
         do {
-          game.setValidProposedCombination();
-          game.rateProposedCombination();
-          game.showBoard();
-        } while (!game.isGameOver());
+          that.setValidProposedCombination();
+          that.rateProposedCombination();
+          that.showBoard();
+        } while (!that.isGameOver());
       },
     };
   }
