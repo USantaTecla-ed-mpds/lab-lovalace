@@ -1,0 +1,63 @@
+@startuml
+
+class Game {
+  -Int maxAttempts
+  -initSecretCombination secretCombination
+  -initProposedCombination proposedCombination
+  -void start()
+  -void showResults()
+  -Boolean isGameOver()
+  -Boolean isTheLoser()
+  -Boolean continues()
+  -void proclaimWinnerOrLoser()
+  +void play()
+}
+
+class YesNoDialog {
+  +String question
+  +String answer
+  +void read()
+  +Boolean isAffirmative()
+  +Boolean isNegative()
+}
+
+class SecretCombination {
+  -initCombination combination
+  +String theSecret
+  +String stars
+  +Boolean isTheWinner
+  -String getRandomColor(String colors)
+  -void updateAttempts(initProposedCombination proposedCombination, Int blackTokens, Int whiteTokens)
+  +void generate()
+  +void rateProposal(initProposedCombination proposedCombination)
+}
+
+class ProposedCombination {
+  -initCombination combination
+  -errorMessages
+  +String theProposal
+  +Int totalAttempts
+  +String attempts
+  -checkErrorsInProposal(String theProposal)
+  -Boolean checkCombinationLength(String theProposal)
+  -Boolean checkNoRepeatColorInCombination(String theProposal)
+  -Boolean checkValidColorsInCombination(String theProposal)
+  -void showErrorMessages(errors)
+  +void setValidProposal()
+  +void increaseAttempts()
+}
+
+class Combination {
+  +String colors
+  +Int theLength
+  +Boolean includesColor(colorsCombination, color)
+}
+
+Game .right.> YesNoDialog
+Game *-down-> SecretCombination
+Game *-down-> ProposedCombination
+SecretCombination -right-> ProposedCombination
+SecretCombination -down-> Combination
+ProposedCombination -down-> Combination
+
+@enduml
