@@ -2,8 +2,8 @@
 
 class Game {
   -Int maxAttempts
-  -initSecretCombination secretCombination
-  -initProposedCombination proposedCombination
+  -SecretCombination secretCombination
+  -ProposedCombination proposedCombination
   -void start()
   -void showResults()
   -Boolean isGameOver()
@@ -22,18 +22,18 @@ class YesNoDialog {
 }
 
 class SecretCombination {
-  -initCombination combination
+  -Combination combination
   +String theSecret
   +String stars
   +Boolean isTheWinner
   -String getRandomColor(String colors)
-  -void updateAttempts(initProposedCombination proposedCombination, Int blackTokens, Int whiteTokens)
+  -void updateAttempts(proposedCombination, Int blackTokens, Int whiteTokens)
   +void generate()
-  +void rateProposal(initProposedCombination proposedCombination)
+  +void rateProposal(proposedCombination)
 }
 
 class ProposedCombination {
-  -initCombination combination
+  -Combination combination
   -errorMessages
   +String theProposal
   +Int totalAttempts

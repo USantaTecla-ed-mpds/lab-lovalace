@@ -2,9 +2,9 @@
 
 class Game {
   -Int maxAttempts
-  -initSecretCombination secretCombination
-  -initProposedCombination proposedCombination
-  -initResult result
+  -SecretCombination secretCombination
+  -ProposedCombination proposedCombination
+  -Result result
   -void start()
   -Boolean isGameOver()
   -Boolean isTheLoser()
@@ -22,18 +22,18 @@ class YesNoDialog {
 }
 
 class SecretCombination {
-  -initCombination combination
+  -Combination combination
   +String theSecret
   +String stars
   +Boolean isTheWinner
   -String getRandomColor(String colors)
-  -void updateAttempts(initProposedCombination proposedCombination, Int blackTokens, Int whiteTokens)
+  -void updateAttempts(proposedCombination, Int blackTokens, Int whiteTokens)
   +void generate()
-  +void rateProposal(initProposedCombination proposedCombination, initResult result)
+  +void rateProposal(proposedCombination, result)
 }
 
 class ProposedCombination {
-  -initCombination combination
+  -Combination combination
   -errorMessages
   +String theProposal
   +Int totalAttempts
@@ -54,14 +54,14 @@ class Combination {
 }
 
 class Result {
-  +void show(initProposedCombination proposedCombination, initSecretCombination secretCombination)
-  +calculate(initSecretCombination secretCombination, initProposedCombination proposedCombination, initCombination combination)
+  +void show(proposedCombination, secretCombination)
+  +calculate(secretCombination, proposedCombination, combination)
 }
 
 Game .right.> YesNoDialog
 Game *-down-> SecretCombination
 Game *-down-> ProposedCombination
-Game *-down-> Result
+Game *-left-> Result
 SecretCombination -left-> Result
 SecretCombination -right-> ProposedCombination
 SecretCombination -down-> Combination
