@@ -18,12 +18,12 @@ function initMasterMind() {
 }
 
 function initGame() {
-  const proposedCombination = initProposedCombination();
   let that = {
     secretCombination: initSecretCombination(),
     maxAttempts: 10,
-    proposedCombinations: [],
-    result: ``,
+    proposedCombination: initProposedCombination(),
+    totalAttempts: 0,
+    attempts: ``,
 
     start() {
       this.secretCombination.generate();
@@ -32,23 +32,18 @@ function initGame() {
     },
     show() {
       console.writeln(
-        `\n${this.proposedCombinations.length} intento(s):\n${this.secretCombination.stars}`
+        `\n${this.totalAttempts} intento(s):\n${this.secretCombination.stars}${this.attempts}`
       );
-      for (let colors of this.proposedCombinations) {
-        const result = this.secretCombination.getResult(colors);
-        console.writeln(
-          `${colors} --> ${result.blacks} negra(s) y ${result.whites} blanca(s)`
-        );
-        this.result = result;
-      }
     },
-    add(proposedCombination) {
-      this.proposedCombinations[this.proposedCombinations.length] =
-        proposedCombination.colors;
+    result: ``,
+    updateAttempts() {
+      this.totalAttempts++;
+      this.result = this.secretCombination.getResult(this.proposedCombination);
+      this.attempts += `\n${this.proposedCombination.colors} --> ${this.result.blacks} negra(s) y ${this.result.whites} blanca(s)`;
     },
     isGameOver() {
       if (
-        this.result.isTheWinner(this.lastProposedCombinationColors()) ||
+        this.result.isTheWinner(this.proposedCombination.colors) ||
         this.isTheLoser()
       ) {
         this.proclaimWinnerOrLoser();
@@ -56,14 +51,11 @@ function initGame() {
       }
       return false;
     },
-    lastProposedCombinationColors() {
-      return this.proposedCombinations[this.proposedCombinations.length - 1];
-    },
     isTheLoser() {
-      return this.proposedCombinations.length === this.maxAttempts;
+      return this.totalAttempts === this.maxAttempts;
     },
     proclaimWinnerOrLoser() {
-      if (this.result.isTheWinner(this.lastProposedCombinationColors())) {
+      if (this.result.isTheWinner(this.proposedCombination.colors)) {
         console.writeln(`\n¡¡Has ganado!! ¡Enhorabuena!`);
       } else {
         console.writeln(
@@ -77,8 +69,8 @@ function initGame() {
   return {
     play() {
       do {
-        proposedCombination.setValidProposal();
-        that.add(proposedCombination);
+        that.proposedCombination.setValidProposal();
+        that.updateAttempts();
         that.show();
       } while (!that.isGameOver());
     },
@@ -89,7 +81,7 @@ function initCombination() {
   return {
     colorsRange: `rgbcmy`,
     lengthValue: 4,
-    //colors: ``,
+    // colors: ``,
     includesColor(colorsCombination, color) {
       for (let i = 0; i < colorsCombination.length; i++) {
         if (colorsCombination[i] === color) {
@@ -102,7 +94,7 @@ function initCombination() {
 }
 
 function initSecretCombination() {
-  const combination = initCombination();
+  combination = initCombination();
   let that = {
     getRandomColor(colorsRange) {
       return colorsRange[parseInt(Math.random() * colorsRange.length)];
@@ -124,12 +116,14 @@ function initSecretCombination() {
         this.stars += `*`;
       }
     },
-    getResult(colors) {
+    getResult(proposedCombination) {
       const result = initResult();
       for (let i = 0; i < this.colors.length; i++) {
-        if (colors[i] === this.colors[i]) {
+        if (proposedCombination.colors[i] === this.colors[i]) {
           result.blacks++;
-        } else if (combination.includesColor(this.colors, colors[i])) {
+        } else if (
+          combination.includesColor(this.colors, proposedCombination.colors[i])
+        ) {
           result.whites++;
         }
       }
@@ -139,7 +133,7 @@ function initSecretCombination() {
 }
 
 function initProposedCombination() {
-  const combination = initCombination();
+  combination = initCombination();
   let that = {
     errorMessages: {
       combinationLength: `-> Longitud incorrecta de la combinación propuesta, debe ser de ${combination.lengthValue} caracteres.`,
@@ -204,8 +198,8 @@ function initResult() {
     blacks: 0,
     whites: 0,
 
-    isTheWinner(colors) {
-      return this.blacks === colors.length;
+    isTheWinner(proposedCombination) {
+      return this.blacks === proposedCombination.length;
     },
   };
 }
