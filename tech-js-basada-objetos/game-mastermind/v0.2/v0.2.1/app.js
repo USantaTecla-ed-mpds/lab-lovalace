@@ -18,7 +18,6 @@ function initMasterMind() {
 }
 
 function initGame() {
-  const proposedCombination = initProposedCombination();
   let that = {
     secretCombination: initSecretCombination(),
     maxAttempts: 10,
@@ -34,17 +33,19 @@ function initGame() {
       console.writeln(
         `\n${this.proposedCombinations.length} intento(s):\n${this.secretCombination.stars}`
       );
-      for (let colors of this.proposedCombinations) {
-        const result = this.secretCombination.getResult(colors);
-        console.writeln(
-          `${colors} --> ${result.blacks} negra(s) y ${result.whites} blanca(s)`
-        );
+      for (let proposalColors of this.proposedCombinations) {
+        const result = this.secretCombination.getResult(proposalColors);
+        console.writeln(`${proposalColors} --> ${result.show()}`);
         this.result = result;
       }
     },
-    add(proposedCombination) {
-      this.proposedCombinations[this.proposedCombinations.length] =
-        proposedCombination.colors;
+    setProposedCombination() {
+      const proposedCombination = initProposedCombination();
+      proposedCombination.setValidProposal();
+      this.add(proposedCombination.getColors());
+    },
+    add(colors) {
+      this.proposedCombinations[this.proposedCombinations.length] = colors;
     },
     isGameOver() {
       if (
@@ -77,8 +78,7 @@ function initGame() {
   return {
     play() {
       do {
-        proposedCombination.setValidProposal();
-        that.add(proposedCombination);
+        that.setProposedCombination();
         that.show();
       } while (!that.isGameOver());
     },
@@ -89,7 +89,7 @@ function initCombination() {
   return {
     colorsRange: `rgbcmy`,
     lengthValue: 4,
-    //colors: ``,
+    colors: ``,
     includesColor(colorsCombination, color) {
       for (let i = 0; i < colorsCombination.length; i++) {
         if (colorsCombination[i] === color) {
@@ -110,7 +110,6 @@ function initSecretCombination() {
   };
 
   return {
-    colors: ``,
     stars: ``,
 
     generate() {
@@ -118,19 +117,22 @@ function initSecretCombination() {
         let randomColor;
         do {
           randomColor = that.getRandomColor(combination.colorsRange);
-          colorIsIncluded = combination.includesColor(this.colors, randomColor);
+          colorIsIncluded = combination.includesColor(
+            combination.colors,
+            randomColor
+          );
         } while (colorIsIncluded);
-        this.colors += randomColor;
+        combination.colors += randomColor;
         this.stars += `*`;
       }
     },
     getResult(colors) {
       const result = initResult();
-      for (let i = 0; i < this.colors.length; i++) {
-        if (colors[i] === this.colors[i]) {
-          result.blacks++;
-        } else if (combination.includesColor(this.colors, colors[i])) {
-          result.whites++;
+      for (let i = 0; i < combination.colors.length; i++) {
+        if (colors[i] === combination.colors[i]) {
+          result.increaseBlacks();
+        } else if (combination.includesColor(combination.colors, colors[i])) {
+          result.increaseWhites();
         }
       }
       return result;
@@ -146,31 +148,40 @@ function initProposedCombination() {
       repeatedColor: `-> Combinación propuesta incorrecta, al menos, un color está repetido.`,
       validColors: `-> Colores incorrectos, deben ser: ${combination.colorsRange}.`,
     },
-    checkErrorsInProposal(colors) {
+    checkErrorsInProposal() {
       let errors = [];
-      if (!this.checkCombinationLength(colors))
+      if (!this.checkCombinationLength())
         errors[errors.length] = this.errorMessages.combinationLength;
-      if (!this.checkNoRepeatColorInCombination(colors))
+      if (!this.checkNoRepeatColorInCombination())
         errors[errors.length] = this.errorMessages.repeatedColor;
-      if (!this.checkValidColorsInCombination(colors))
+      if (!this.checkValidColorsInCombination())
         errors[errors.length] = this.errorMessages.validColors;
       return errors;
     },
-    checkCombinationLength(colors) {
-      return colors.length === combination.lengthValue;
+    checkCombinationLength() {
+      return combination.colors.length === combination.lengthValue;
     },
-    checkNoRepeatColorInCombination(colors) {
+    checkNoRepeatColorInCombination() {
       let isRepeatedColor = false;
-      for (let i = 0; !isRepeatedColor && i < colors.length; i++) {
-        for (let j = i + 1; !isRepeatedColor && j < colors.length; j++) {
-          isRepeatedColor = colors[j] === colors[i];
+      for (let i = 0; !isRepeatedColor && i < combination.colors.length; i++) {
+        for (
+          let j = i + 1;
+          !isRepeatedColor && j < combination.colors.length;
+          j++
+        ) {
+          isRepeatedColor = combination.colors[j] === combination.colors[i];
         }
       }
       return !isRepeatedColor;
     },
-    checkValidColorsInCombination(colors) {
-      for (let i = 0; i < colors.length; i++) {
-        if (!combination.includesColor(combination.colorsRange, colors[i])) {
+    checkValidColorsInCombination() {
+      for (let i = 0; i < combination.colors.length; i++) {
+        if (
+          !combination.includesColor(
+            combination.colorsRange,
+            combination.colors[i]
+          )
+        ) {
           return false;
         }
       }
@@ -184,28 +195,41 @@ function initProposedCombination() {
   };
 
   return {
-    colors: ``,
     setValidProposal() {
       let isWrongProposal;
       do {
-        this.colors = console.readString(`Propón una combinación: `);
-        let errors = that.checkErrorsInProposal(this.colors);
+        combination.colors = console.readString(`Propón una combinación: `);
+        let errors = that.checkErrorsInProposal();
         isWrongProposal = errors.length > 0;
         if (isWrongProposal) {
           that.showErrorMessages(errors);
         }
       } while (isWrongProposal);
     },
+    getColors() {
+      return combination.colors;
+    },
   };
 }
 
 function initResult() {
-  return {
+  let that = {
     blacks: 0,
     whites: 0,
+  };
 
+  return {
+    increaseBlacks() {
+      that.blacks++;
+    },
+    increaseWhites() {
+      that.whites++;
+    },
+    show() {
+      return `${that.blacks} negra(s) y ${that.whites} blanca(s)`;
+    },
     isTheWinner(colors) {
-      return this.blacks === colors.length;
+      return that.blacks === colors.length;
     },
   };
 }

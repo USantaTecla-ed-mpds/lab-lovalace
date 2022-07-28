@@ -12,15 +12,23 @@
 ```
 @startuml
 
+class MasterMind {
+  +YesNoDialog continueDialog
+  +void play()
+}
+
 class Game {
-  -Int maxAttempts
   -SecretCombination secretCombination
-  -ProposedCombination proposedCombination
-  -Result result
+  -Int maxAttempts
+  -String[] proposedCombinations
+  -result
   -void start()
+  -void show()
+  -void setProposedCombination()
+  -void add(String colors)
   -Boolean isGameOver()
+  -String lastProposedCombinationColors()
   -Boolean isTheLoser()
-  -Boolean continues()
   -void proclaimWinnerOrLoser()
   +void play()
 }
@@ -35,49 +43,49 @@ class YesNoDialog {
 
 class SecretCombination {
   -Combination combination
-  +String theSecret
   +String stars
-  +Boolean isTheWinner
-  -String getRandomColor(String colors)
-  -void updateAttempts(proposedCombination, Int blackTokens, Int whiteTokens)
+  -String getRandomColor(String colorsRange)
   +void generate()
-  +void rateProposal(proposedCombination, result)
+  +Result getResult(String colors)
 }
 
 class ProposedCombination {
   -Combination combination
   -errorMessages
-  +String theProposal
-  +Int totalAttempts
-  +String attempts
-  -checkErrorsInProposal(String theProposal)
-  -Boolean checkCombinationLength(String theProposal)
-  -Boolean checkNoRepeatColorInCombination(String theProposal)
-  -Boolean checkValidColorsInCombination(String theProposal)
+  -checkErrorsInProposal()
+  -Boolean checkCombinationLength()
+  -Boolean checkNoRepeatColorInCombination()
+  -Boolean checkValidColorsInCombination()
   -void showErrorMessages(errors)
   +void setValidProposal()
-  +void increaseAttempts()
+  +String getColors()
 }
 
 class Combination {
+  +String colorsRange
+  +Int lengthValue
   +String colors
-  +Int theLength
   +Boolean includesColor(colorsCombination, color)
 }
 
 class Result {
-  +void show(proposedCombination, secretCombination)
-  +calculate(secretCombination, proposedCombination, combination)
+  -Int blacks
+  -Int whites
+  +void increaseBlacks()
+  +void increaseWhites()
+  +void show()
+  +Boolean isTheWinner(Strng colors)
 }
 
-Game .right.> YesNoDialog
-Game *-down-> SecretCombination
-Game *-down-> ProposedCombination
-Game *-left-> Result
-SecretCombination -left-> Result
-SecretCombination -right-> ProposedCombination
-SecretCombination -down-> Combination
-ProposedCombination -down-> Combination
+MasterMind .down.> Game
+MasterMind .down.> YesNoDialog
+Game *-down-> SecretCombination : parte
+Game o-down-> ProposedCombination : agrega
+Game .left.> Result
+SecretCombination .up.> Result : usa
+SecretCombination .right.> ProposedCombination
+SecretCombination -down-> Combination : asociado
+ProposedCombination -down-> Combination : asociado
 
 @enduml
 ```
