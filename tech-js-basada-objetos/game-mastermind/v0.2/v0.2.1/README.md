@@ -9,7 +9,7 @@
 
 ## plantUML
 
-```
+```text
 @startuml
 
 class MasterMind {
