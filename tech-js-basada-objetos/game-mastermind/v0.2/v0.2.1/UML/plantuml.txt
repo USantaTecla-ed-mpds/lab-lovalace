@@ -5,28 +5,29 @@ class MasterMind {
   +void play()
 }
 
+class YesNoDialog {
+  -String question
+  -String answer
+  +void read()
+  +Boolean isAffirmative()
+  +Boolean isNegative()
+}
+
 class Game {
   -SecretCombination secretCombination
   -Int maxAttempts
   -String[] proposedCombinations
-  -result
   -void start()
   -void show()
   -void setProposedCombination()
   -void add(String colors)
   -Boolean isGameOver()
+  -Boolean isTheWinner()
+  -Result getResult()
   -String lastProposedCombinationColors()
   -Boolean isTheLoser()
   -void proclaimWinnerOrLoser()
   +void play()
-}
-
-class YesNoDialog {
-  +String question
-  +String answer
-  +void read()
-  +Boolean isAffirmative()
-  +Boolean isNegative()
 }
 
 class SecretCombination {
@@ -62,7 +63,7 @@ class Result {
   +void increaseBlacks()
   +void increaseWhites()
   +void show()
-  +Boolean isTheWinner(Strng colors)
+  +Boolean isTheWinner(String colors)
 }
 
 MasterMind .down.> Game

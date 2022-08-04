@@ -17,12 +17,39 @@ function initMasterMind() {
   };
 }
 
+function initYesNoDialog(question) {
+  let that = {
+    question: question,
+    answer: ``,
+  };
+
+  return {
+    read() {
+      let error = false;
+      do {
+        that.answer = console.readString(that.question);
+        error = !this.isAffirmative() && !this.isNegative();
+        if (error) {
+          console.writeln(`Por favor, responde "s" o "n"`);
+        }
+      } while (error);
+    },
+
+    isAffirmative() {
+      return that.answer === `s`;
+    },
+
+    isNegative() {
+      return that.answer === `n`;
+    },
+  };
+}
+
 function initGame() {
   let that = {
     secretCombination: initSecretCombination(),
     maxAttempts: 10,
     proposedCombinations: [],
-    result: ``,
 
     start() {
       this.secretCombination.generate();
@@ -36,7 +63,6 @@ function initGame() {
       for (let proposalColors of this.proposedCombinations) {
         const result = this.secretCombination.getResult(proposalColors);
         console.writeln(`${proposalColors} --> ${result.show()}`);
-        this.result = result;
       }
     },
     setProposedCombination() {
@@ -48,14 +74,19 @@ function initGame() {
       this.proposedCombinations[this.proposedCombinations.length] = colors;
     },
     isGameOver() {
-      if (
-        this.result.isTheWinner(this.lastProposedCombinationColors()) ||
-        this.isTheLoser()
-      ) {
+      if (this.isTheWinner() || this.isTheLoser()) {
         this.proclaimWinnerOrLoser();
         return true;
       }
       return false;
+    },
+    isTheWinner() {
+      return this.getResult().isTheWinner(this.lastProposedCombinationColors());
+    },
+    getResult() {
+      return this.secretCombination.getResult(
+        this.lastProposedCombinationColors()
+      );
     },
     lastProposedCombinationColors() {
       return this.proposedCombinations[this.proposedCombinations.length - 1];
@@ -64,7 +95,7 @@ function initGame() {
       return this.proposedCombinations.length === this.maxAttempts;
     },
     proclaimWinnerOrLoser() {
-      if (this.result.isTheWinner(this.lastProposedCombinationColors())) {
+      if (this.isTheWinner()) {
         console.writeln(`\n¡¡Has ganado!! ¡Enhorabuena!`);
       } else {
         console.writeln(
@@ -81,22 +112,6 @@ function initGame() {
         that.setProposedCombination();
         that.show();
       } while (!that.isGameOver());
-    },
-  };
-}
-
-function initCombination() {
-  return {
-    colorsRange: `rgbcmy`,
-    lengthValue: 4,
-    colors: ``,
-    includesColor(colorsCombination, color) {
-      for (let i = 0; i < colorsCombination.length; i++) {
-        if (colorsCombination[i] === color) {
-          return true;
-        }
-      }
-      return false;
     },
   };
 }
@@ -212,6 +227,22 @@ function initProposedCombination() {
   };
 }
 
+function initCombination() {
+  return {
+    colorsRange: `rgbcmy`,
+    lengthValue: 4,
+    colors: ``,
+    includesColor(colorsCombination, color) {
+      for (let i = 0; i < colorsCombination.length; i++) {
+        if (colorsCombination[i] === color) {
+          return true;
+        }
+      }
+      return false;
+    },
+  };
+}
+
 function initResult() {
   let that = {
     blacks: 0,
@@ -230,32 +261,6 @@ function initResult() {
     },
     isTheWinner(colors) {
       return that.blacks === colors.length;
-    },
-  };
-}
-
-function initYesNoDialog(question) {
-  return {
-    question: question,
-    answer: ``,
-
-    read() {
-      let error = false;
-      do {
-        answer = console.readString(this.question);
-        error = !this.isAffirmative() && !this.isNegative();
-        if (error) {
-          console.writeln(`Por favor, responde "s" o "n"`);
-        }
-      } while (error);
-    },
-
-    isAffirmative() {
-      return answer === `s`;
-    },
-
-    isNegative() {
-      return answer === `n`;
     },
   };
 }
