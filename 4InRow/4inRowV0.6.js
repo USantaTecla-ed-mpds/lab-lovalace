@@ -10,7 +10,7 @@ do {
 
 function createGame() {
     return {
-        panel: createPanel(),//ej de comentario: yo cambiaría panel por board
+        panel: createPanel(),
         panelView: createPanelView(),
         player: createPlayer(),
         playerView: createPlayerView(),
@@ -79,10 +79,10 @@ function createGame() {
                 return plays % 2 + 1;
             },
             chooseValidColumn: function (panel, playerView, activeToken) {
-                const playMode = this.GAME_MODE[activeToken - 1];
+                const AUTOMATIC_OR_MANUAL = this.GAME_MODE[activeToken - 1];
                 let column;
                 do {
-                    column = playMode(activeToken, playerView, panel.COLUMNS_LENGTH);
+                    column = AUTOMATIC_OR_MANUAL(panel.COLUMNS_LENGTH, activeToken, playerView);
                 } while (!checkValidColumn(panel, column))
                 let row = firstEmptyRow(panel, column);
                 return { row, column };
@@ -105,10 +105,10 @@ function createGame() {
         function checkValidColumn({ COLUMNS_LENGTH, ROWS_LENGTH, squares }, numberColumn) {
             return numberColumn < COLUMNS_LENGTH && numberColumn >= 0 && squares[ROWS_LENGTH - 1][numberColumn] == 0;
         }
-        function manual(activeToken, playerView) {
+        function manual(a, activeToken, playerView) {
             return playerView.setNumber(`jugador ${activeToken}, Escoge una columna (0-6)`);
         }
-        function automatic(a, b, COLUMNS_LENGTH) {
+        function automatic(COLUMNS_LENGTH) {
             return parseInt(Math.random() * COLUMNS_LENGTH);
         }
     }
@@ -134,12 +134,11 @@ function createGame() {
             },
             isWiner: function (lastToken, activeToken, panel) {
                 const INIT_VECTORS =
-                    [{ vectorRow: -1, vectorColumn: 0 }, { vectorRow: 1, vectorColumn: 0 },
-                    { vectorRow: 0, vectorColumn: 1 }, { vectorRow: 0, vectorColumn: -1 },
-                    { vectorRow: -1, vectorColumn: -1 }, { vectorRow: 1, vectorColumn: 1 },
-                    { vectorRow: -1, vectorColumn: 1 }, { vectorRow: 1, vectorColumn: -1 }
-                    ]//cagada:el tercer vector está de relleno
-                //que tal se lee?
+                    [{ rowMove: -1, columnMove: 0 }, { rowMove: 1, columnMove: 0 },
+                    { rowMove: 0, columnMove: 1 }, { rowMove: 0, columnMove: -1 },
+                    { rowMove: -1, columnMove: -1 }, { rowMove: 1, columnMove: 1 },
+                    { rowMove: -1, columnMove: 1 }, { rowMove: 1, columnMove: -1 }
+                    ]
                 let goal = false;
                 for (let i = 0; !goal && i <= INIT_VECTORS.length - 2; i = i + 2) {
                     const tokensToLeft = createVector(INIT_VECTORS[i]);
@@ -149,16 +148,17 @@ function createGame() {
                 return goal;
             }
         };
-        function createVector({ vectorRow, vectorColumn }) {
+        function createVector({ rowMove, columnMove }) {
             return {
-                vectorRow: vectorRow,
-                vectorColumn: vectorColumn,
+                rowMove: rowMove,//no hace falta, la función puede coger los valores de la cabecera de createVector, que se aconseja?
+                columnMove: columnMove,//esto tampoco hace falta
+                //countSameTokens podría ser una función libre pero sobrecargaría la cabecera
                 countSameTokens: function ({ row, column }, activeToken, { squares, ROWS_LENGTH, COLUMNS_LENGTH }) {
                     let exit = false;
                     let count = 0;
                     do {
-                        row = row + vectorRow;
-                        column = column + vectorColumn;
+                        row = row + this.rowMove;//quitando el this. coge los datos de la cabecera de createvector
+                        column = column + this.columnMove;
                         if (row < 0 || column < 0 || row >= ROWS_LENGTH || column >= COLUMNS_LENGTH) {
                             exit = true;
                         } else if (squares[row][column] == activeToken) {
