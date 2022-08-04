@@ -1,0 +1,104 @@
+@startuml
+
+class MasterMindView {
+  +YesNoDialog continueDialog
+  +void play()
+}
+
+class YesNoDialog {
+  -String question
+  -String answer
+  +void read()
+  +Boolean isAffirmative()
+  +Boolean isNegative()
+}
+
+class GameView {
+  -Game game
+  -void start()
+  -void setProposedCombination()
+  -void show()
+  -void proclaimWinnerOrLoser()
+  +void play()
+}
+
+class Game {
+  -SecretCombination secretCombination
+  -Int maxAttempts
+  -String[] proposedCombinations
+  -Result getLastResult()
+  -String lastProposedCombinationColors()
+  -Boolean isTheLoser()
+  +void add(String colors)
+  +String getStars()
+  +String[] getProposedCombinations()
+  +Result getResult(String proposalColors)
+  +Boolean isGameOver()
+  +Boolean isTheWinner()
+}
+
+class SecretCombination {
+  -Combination combination
+  +String stars
+  -String getRandomColor(String colorsRange)
+  +void generate()
+  +Result getResult(String colors)
+}
+
+class ProposedCombinationView {
+  -ProposedCombination proposedCombination
+  -errorMessages
+  -checkErrorsInProposal()
+  -void showErrorMessages(errors)
+  +ProposedCombination setValidProposal()
+  +void show(String proposalColors)
+}
+
+class ProposedCombination {
+  -Combination combination
+  +Boolean checkCombinationLength()
+  +Boolean checkNoRepeatColorInCombination()
+  +Boolean checkValidColorsInCombination()
+  +String setColors(String colors)
+  +String getColors()
+  +Int getCombinationLength()
+  +String getColorsRange()
+}
+
+class Combination {
+  +String colorsRange
+  +Int lengthValue
+  +String colors
+  +Boolean includesColor(colorsCombination, color)
+}
+
+class ResultView {
+  +void show(Result result)
+}
+
+class Result {
+  -Int blacks
+  -Int whites
+  +void increaseBlacks()
+  +void increaseWhites()
+  +Int getBlacks()
+  +Int getWhites()
+  +Boolean isTheWinner(String colors)
+}
+
+MasterMindView .down.> GameView
+MasterMindView .down.> YesNoDialog
+GameView .down.> ResultView
+GameView .down.> Game
+GameView .down.> ProposedCombinationView
+ResultView .down.> Result
+ProposedCombinationView .down.> ProposedCombination
+Game *-down-> SecretCombination : parte
+Game o-down-> ProposedCombination : agrega
+Game .left.> Result
+SecretCombination .up.> Result : usa
+SecretCombination .right.> ProposedCombination
+SecretCombination -down-> Combination : asociado
+ProposedCombination -down-> Combination : asociado
+
+@enduml
