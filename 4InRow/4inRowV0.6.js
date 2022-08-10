@@ -150,14 +150,14 @@ function createGame() {
         };
         function createVector({ rowMove, columnMove }) {
             return {
-                rowMove: rowMove,//no hace falta, la función puede coger los valores de la cabecera de createVector, que se aconseja?
-                columnMove: columnMove,//esto tampoco hace falta
-                //countSameTokens podría ser una función libre pero sobrecargaría la cabecera
+                rowMove:
+                columnMove:
                 countSameTokens: function ({ row, column }, activeToken, { squares, ROWS_LENGTH, COLUMNS_LENGTH }) {
                     let exit = false;
                     let count = 0;
                     do {
-                        row = row + this.rowMove;//quitando el this. coge los datos de la cabecera de createvector
+      //si no uso this. en rowMove y columnMove coge los datos directamente de la cabecera de createVector.. es un objeto y un clousure a la vez?
+                        row = row + this.rowMove;
                         column = column + this.columnMove;
                         if (row < 0 || column < 0 || row >= ROWS_LENGTH || column >= COLUMNS_LENGTH) {
                             exit = true;
