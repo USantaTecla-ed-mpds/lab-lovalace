@@ -16,23 +16,23 @@ function createGame() {
         playerView: createPlayerView(),
         run: function () {
             let plays = 0;
-            let activeToken;
+            let activePlayer;
             let win = false;
             let MIN_TOKENS_TO_WIN = 7;
             this.player.setGameMode(this.playerView);
             this.panel.makeSquares();
             this.panelView.showSquares(plays, this.panel);
             do {
-                activeToken = this.player.changeActivePlayer(plays);
+                activePlayer = this.player.changeActivePlayer(plays);
                 plays++;
-                let lastToken = this.player.chooseValidColumn(this.panel, this.playerView, activeToken);
-                this.panel.insertToken(lastToken, activeToken);
+                let lastToken = this.player.chooseValidColumn(this.panel, this.playerView, activePlayer);
+                this.panel.insertToken(lastToken, activePlayer);
                 this.panelView.showSquares(plays, this.panel);
                 if (plays >= MIN_TOKENS_TO_WIN) {
-                    win = this.panel.isWiner(lastToken, activeToken, this.panel);
+                    win = this.panel.isWiner(lastToken, activePlayer, this.panel);
                 }
-            } while (!win || this.panel.tie(plays))
-            this.panelView.endGameMessage(activeToken, win);
+            } while (!win && !this.panel.tie(plays))
+            this.panelView.endGameMessage(activePlayer, win);
         }
     };
     function createPanelView() {
@@ -48,9 +48,9 @@ function createGame() {
                 console.writeln(`${plays} jugadas`);
                 console.writeln(msg);
             },
-            endGameMessage: function (activeToken, win) {
+            endGameMessage: function (activePlayer, win) {
                 if (win) {
-                    console.writeln(`El jugador ${activeToken} ha ganado la partida.`);
+                    console.writeln(`El jugador ${activePlayer} ha ganado la partida.`);
                 } else {
                     console.writeln(`Empate, tablero lleno.`);
                 }
@@ -78,11 +78,11 @@ function createGame() {
             changeActivePlayer: function (plays) {
                 return plays % 2 + 1;
             },
-            chooseValidColumn: function (panel, playerView, activeToken) {
-                const AUTOMATIC_OR_MANUAL = this.GAME_MODE[activeToken - 1];
+            chooseValidColumn: function (panel, playerView, activePlayer) {
+                const AUTOMATIC_OR_MANUAL = this.GAME_MODE[activePlayer - 1];
                 let column;
                 do {
-                    column = AUTOMATIC_OR_MANUAL(panel.COLUMNS_LENGTH, activeToken, playerView);
+                    column = AUTOMATIC_OR_MANUAL(panel.COLUMNS_LENGTH, activePlayer, playerView);
                 } while (!checkValidColumn(panel, column))
                 let row = firstEmptyRow(panel, column);
                 return { row, column };
@@ -105,8 +105,8 @@ function createGame() {
         function checkValidColumn({ COLUMNS_LENGTH, ROWS_LENGTH, squares }, numberColumn) {
             return numberColumn < COLUMNS_LENGTH && numberColumn >= 0 && squares[ROWS_LENGTH - 1][numberColumn] == 0;
         }
-        function manual(a, activeToken, playerView) {
-            return playerView.setNumber(`jugador ${activeToken}, Escoge una columna (0-6)`);
+        function manual(a, activePlayer, playerView) {
+            return playerView.setNumber(`jugador ${activePlayer}, Escoge una columna (0-6)`);
         }
         function automatic(COLUMNS_LENGTH) {
             return parseInt(Math.random() * COLUMNS_LENGTH);
@@ -117,8 +117,8 @@ function createGame() {
             squares: null,
             ROWS_LENGTH: 6,
             COLUMNS_LENGTH: 7,
-            insertToken: function ({ row, column }, activeToken) {
-                squares[row][column] = activeToken;
+            insertToken: function ({ row, column }, activePlayer) {
+                squares[row][column] = activePlayer;
             },
             tie: function (plays) {
                 MAX_TOKENS = this.ROWS_LENGTH * this.COLUMNS_LENGTH;
@@ -132,7 +132,7 @@ function createGame() {
                 resetSquares(this.ROWS_LENGTH, this.COLUMNS_LENGTH);
                 this.squares = squares;
             },
-            isWiner: function (lastToken, activeToken, panel) {
+            isWiner: function (lastToken, activePlayer, panel) {
                 const INIT_VECTORS =
                     [{ rowMove: -1, columnMove: 0 }, { rowMove: 1, columnMove: 0 },
                     { rowMove: 0, columnMove: 1 }, { rowMove: 0, columnMove: -1 },
@@ -143,25 +143,25 @@ function createGame() {
                 for (let i = 0; !goal && i <= INIT_VECTORS.length - 2; i = i + 2) {
                     const tokensToLeft = createVector(INIT_VECTORS[i]);
                     const tokensToRight = createVector(INIT_VECTORS[i + 1]);
-                    goal = tokensToLeft.countSameTokens(lastToken, activeToken, panel) + 1 + tokensToRight.countSameTokens(lastToken, activeToken, panel) >= 4
+                    goal = tokensToLeft.countSameTokens(lastToken, activePlayer, panel) + 1 + tokensToRight.countSameTokens(lastToken, activePlayer, panel) >= 4
                 }
                 return goal;
             }
         };
         function createVector({ rowMove, columnMove }) {
             return {
-                rowMove:
-                columnMove:
-                countSameTokens: function ({ row, column }, activeToken, { squares, ROWS_LENGTH, COLUMNS_LENGTH }) {
+                rowMove: rowMove,
+                columnMove: columnMove,
+                countSameTokens: function ({ row, column }, activePlayer, { squares, ROWS_LENGTH, COLUMNS_LENGTH }) {
                     let exit = false;
                     let count = 0;
                     do {
-      //si no uso this. en rowMove y columnMove coge los datos directamente de la cabecera de createVector.. es un objeto y un clousure a la vez?
+    //quitando el this. en rowMove y columnMove coge los datos de la cabecera de createvector.. es un objeto y un clousure a la vez?
                         row = row + this.rowMove;
                         column = column + this.columnMove;
                         if (row < 0 || column < 0 || row >= ROWS_LENGTH || column >= COLUMNS_LENGTH) {
                             exit = true;
-                        } else if (squares[row][column] == activeToken) {
+                        } else if (squares[row][column] == activePlayer) {
                             count++;
                         } else {
                             exit = true;
