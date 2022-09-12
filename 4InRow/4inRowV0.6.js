@@ -1,12 +1,43 @@
 //board[fila][columna]--Alberto--
-//--PARA CUALQUIERA QUE LEA ESTE CÓDIGO--Comenta que cambiarías del mismo ()
 const { Console } = require("console-mpds");
 const console = new Console();
-const askToContinue = () => console.readString(`quieres continuar? (y/n):`)[0] === "y";
-do {
-    const game = createGame();
-    game.run();
-} while (askToContinue())
+
+init4InRow().play();
+
+function init4InRow() {
+    return {
+        play: function () {
+            const continueDialogView = askToContinueView(`¿Quieres jugar otra vez? `);
+            do {
+                const game = createGame();
+                game.run();
+                continueDialogView.read();
+            } while (continueDialogView.isAffirmative())
+        }
+    }
+}
+function askToContinueView(question) {//como en la 187, los parametros de la cabecera son accesibles desde metodos del objeto  
+    let answer;
+    return {
+        read: function () {
+            let error;
+            do {
+                answer = console.readString(question);
+                error = !this.isAffirmative() && !this.isNegative();
+                if (error) {
+                    console.writeln(`Por favor, responda "si" o "no"`);
+                }
+            } while (error);
+        },
+        isAffirmative: function () {
+            return answer === `si`;
+        },
+        isNegative: function () {
+            return answer === `no`;
+        }
+    }
+}
+
 
 function createGame() {
     return {
@@ -150,15 +181,16 @@ function createGame() {
         };
         function createVector({ rowMove, columnMove }) {
             return {
-                rowMove: rowMove,
-                columnMove: columnMove,
+                //rowMove: rowMove,
+                //columnMove: columnMove,
+     // los comentados no hacen falta, los metodos pueden acceder a los datos de la cabecera de la función creadora del objeto 
                 countSameTokens: function ({ row, column }, activePlayer, { squares, ROWS_LENGTH, COLUMNS_LENGTH }) {
                     let exit = false;
                     let count = 0;
                     do {
-    //quitando el this. en rowMove y columnMove coge los datos de la cabecera de createvector.. es un objeto y un clousure a la vez?
-                        row = row + this.rowMove;
-                        column = column + this.columnMove;
+
+                        row = row + rowMove;
+                        column = column + columnMove;
                         if (row < 0 || column < 0 || row >= ROWS_LENGTH || column >= COLUMNS_LENGTH) {
                             exit = true;
                         } else if (squares[row][column] == activePlayer) {
