@@ -2,4 +2,4 @@
 4InRowV0.3--Alberto-- jugadores o random, objeto tonto, por consola
 4InRowV0.4--Alberto-- distintos objetos con métodos y funciones privadas.
 4InRowV0.5--Alberto--objetos, vistas de cada objeto para entrada-salida de datos. cambiar la fila0 por una función y remodelar player y panel, después de estudiar otros códigos.
-4InRowV0.6--Alberto--saco los parametros mutables de los objetos y los presento como variables locales. Para buscar un ganador uso vectores y reduzco las funciones usadas a dos, elimino la clase win y paso sus funciones a panel, me sigue preocupando la legibilidad-- SE AGRADECEN COMENTARIOS! PUEDES HACERLOS EN EL MISMO CÓDIGO. el objeto principal(juega y pregunta si continuar) copiado de chomski
+4InRowV0.6--Alberto--saco los parametros mutables de los objetos y los presento como variables locales. Para buscar un ganador uso vectores y reduzco las funciones usadas a dos, elimino la clase win y paso sus funciones a panel, me sigue preocupando la legibilidad-- SE AGRADECEN COMENTARIOS! PUEDES HACERLOS EN EL MISMO CÓDIGO. el objeto principal(juega y pregunta si continuar) copiado de chomski... troceé algunos métodos para aligerar las cabeceras.
