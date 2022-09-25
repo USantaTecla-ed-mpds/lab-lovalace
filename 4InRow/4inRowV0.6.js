@@ -2,9 +2,9 @@
 const { Console } = require("console-mpds");
 const console = new Console();
 
-init4InRow().play();
+create4InRow().play();
 
-function init4InRow() {
+function create4InRow() {
     return {
         play: function () {
             const continueDialogView = askToContinueView(`¿Quieres jugar otra vez? `);
@@ -16,7 +16,7 @@ function init4InRow() {
         }
     }
 }
-function askToContinueView(question) {//como en la 187, los parametros de la cabecera son accesibles desde metodos del objeto  
+function askToContinueView(question) {
     let answer;
     return {
         read: function () {
@@ -37,42 +37,43 @@ function askToContinueView(question) {//como en la 187, los parametros de la cab
         }
     }
 }
-
-
 function createGame() {
     return {
         panel: createPanel(),
         panelView: createPanelView(),
-        player: createPlayer(),
-        playerView: createPlayerView(),
+        players: createPlayers(),
+        playersView: createPlayersView(),
         run: function () {
+            this.playersView.setGameMode();
             let plays = 0;
-            let activePlayer;
-            let win = false;
-            let MIN_TOKENS_TO_WIN = 7;
-            this.player.setGameMode(this.playerView);
-            this.panel.makeSquares();
             this.panelView.showSquares(plays, this.panel);
+            let win = false;
+            let activePlayer;
+            let activeMode;
             do {
-                activePlayer = this.player.changeActivePlayer(plays);
+                activePlayer = this.players.changeActivePlayer(plays);
+                activeMode = this.playersView.changeActiveMode(plays);
                 plays++;
-                let lastToken = this.player.chooseValidColumn(this.panel, this.playerView, activePlayer);
+                let column;
+                do {
+                    column = this.playersView.chooseColumn(activeMode, activePlayer);
+                } while (!this.panel.checkValidColumn(column));
+                let row = this.panel.firstEmptyRow(column);
+                let lastToken = { row, column };
                 this.panel.insertToken(lastToken, activePlayer);
                 this.panelView.showSquares(plays, this.panel);
-                if (plays >= MIN_TOKENS_TO_WIN) {
-                    win = this.panel.isWiner(lastToken, activePlayer, this.panel);
-                }
+                win = this.panel.isWiner(lastToken, activePlayer);
             } while (!win && !this.panel.tie(plays))
             this.panelView.endGameMessage(activePlayer, win);
         }
     };
     function createPanelView() {
         return {
-            showSquares: function (plays, { COLUMNS_LENGTH, ROWS_LENGTH, squares }) {
+            showSquares: function (plays, panel) {
                 let msg = "";
-                for (let i = ROWS_LENGTH - 1; i >= 0; i--) {
-                    for (let j = 0; j < COLUMNS_LENGTH; j++) {
-                        msg += squares[i][j] + " ";
+                for (let i = panel.ROWS_LENGTH - 1; i >= 0; i--) {
+                    for (let j = 0; j < panel.COLUMNS_LENGTH; j++) {
+                        msg += panel.squares[i][j] + " ";
                     }
                     msg += "\n";
                 }
@@ -88,82 +89,70 @@ function createGame() {
             },
         };
     }
-    function createPlayerView() {
+    function createPlayersView() {
         return {
-            setNumber: function (message) {
-                return console.readNumber(message);
-            },
-            showGameMode: function () {
-                const GAME_MODE_NAMES = ["Jugador contra Jugador", "Jugador contra Computador", "Computador contra Computador"];
+            PLAYERS_MODE: null,//está aqui por comodidad.. devería estar en el objeto players?
+            setGameMode: function () {
+                const PLAYERS_MODE_OPTIONS = ["Jugador contra Jugador", "Jugador contra Computador", "Computador contra Computador"];
                 let msg = (`\n----- 4inRow -----\ \n\nMODOS DE JUEGO`);
-                for (let i = 0; i < GAME_MODE_NAMES.length; i++) {
-                    msg += `\n${i + 1}. ${GAME_MODE_NAMES[i]}`;
+                for (let i = 0; i < PLAYERS_MODE_OPTIONS.length; i++) {
+                    msg += `\n${i + 1}. ${PLAYERS_MODE_OPTIONS[i]}`;
                 }
                 console.writeln(msg);
-            }
-        };
-    }
-    function createPlayer() {
-        return {
-            GAME_MODE: null,
-            changeActivePlayer: function (plays) {
-                return plays % 2 + 1;
-            },
-            chooseValidColumn: function (panel, playerView, activePlayer) {
-                const AUTOMATIC_OR_MANUAL = this.GAME_MODE[activePlayer - 1];
-                let column;
+                let index;
                 do {
-                    column = AUTOMATIC_OR_MANUAL(panel.COLUMNS_LENGTH, activePlayer, playerView);
-                } while (!checkValidColumn(panel, column))
-                let row = firstEmptyRow(panel, column);
-                return { row, column };
+                    index = console.readNumber(`Elige un modo de juego (1, 2 o 3): `) - 1;
+                } while (index != 0 && index != 1 && index != 2);
+                this.PLAYERS_MODE = [[manual, manual], [manual, automatic], [automatic, automatic]][index];
             },
-            setGameMode: function (playerView) {
-                playerView.showGameMode();
-                const index = playerView.setNumber(`Elige un modo de juego (1, 2 o 3): `) - 1;
-                this.GAME_MODE = [[manual, manual], [manual, automatic], [automatic, automatic]][index];
-            }
+            changeActiveMode: function (plays) {
+                return this.PLAYERS_MODE[plays % 2];
+            },
+            chooseColumn: function (activeMode, activePlayer) {
+                return activeMode(activePlayer);
+            },
         };
-        function firstEmptyRow({ squares, ROWS_LENGTH }, column) {
-            let found;
-            let row;
-            for (i = 0; !found || i > ROWS_LENGTH; i++) {
-                row = i;
-                found = squares[i][column] == 0;
-            }
-            return row;
+        function manual(activePlayer) {
+            return console.readNumber(`jugador ${activePlayer}, Escoge una columna (0-6)`);
         }
-        function checkValidColumn({ COLUMNS_LENGTH, ROWS_LENGTH, squares }, numberColumn) {
-            return numberColumn < COLUMNS_LENGTH && numberColumn >= 0 && squares[ROWS_LENGTH - 1][numberColumn] == 0;
-        }
-        function manual(a, activePlayer, playerView) {
-            return playerView.setNumber(`jugador ${activePlayer}, Escoge una columna (0-6)`);
-        }
-        function automatic(COLUMNS_LENGTH) {
+        function automatic() {
+            const COLUMNS_LENGTH = 7;
             return parseInt(Math.random() * COLUMNS_LENGTH);
         }
     }
+    function createPlayers() {
+        return {
+            PLAYERS: [1, 2],
+            changeActivePlayer: function (plays) {
+                return this.PLAYERS[plays % 2];
+            }
+        };
+    }
     function createPanel() {
         return {
-            squares: null,
+            squares: makeSquares(),
             ROWS_LENGTH: 6,
             COLUMNS_LENGTH: 7,
-            insertToken: function ({ row, column }, activePlayer) {
-                squares[row][column] = activePlayer;
+            checkValidColumn: function (column) {
+                return column < this.COLUMNS_LENGTH && column >= 0 && this.squares[this.ROWS_LENGTH - 1][column] == 0;
+            },
+            firstEmptyRow: function (column) {
+                let found;
+                let row;
+                for (i = 0; !found || i > this.ROWS_LENGTH; i++) {
+                    row = i;
+                    found = this.squares[i][column] == 0;
+                }
+                return row;
+            },
+            insertToken: function (lastToken, activePlayer) {
+                squares[lastToken.row][lastToken.column] = activePlayer;
             },
             tie: function (plays) {
                 MAX_TOKENS = this.ROWS_LENGTH * this.COLUMNS_LENGTH;
-                return MAX_TOKENS == plays;
+                return MAX_TOKENS === plays;
             },
-            makeSquares: function () {
-                squares = new Array(this.ROWS_LENGTH);
-                for (let i = 0; i < this.ROWS_LENGTH; i++) {
-                    squares[i] = new Array(this.COLUMNS_LENGTH);
-                }
-                resetSquares(this.ROWS_LENGTH, this.COLUMNS_LENGTH);
-                this.squares = squares;
-            },
-            isWiner: function (lastToken, activePlayer, panel) {
+            isWiner: function (lastToken, activePlayer) {
                 const INIT_VECTORS =
                     [{ rowMove: -1, columnMove: 0 }, { rowMove: 1, columnMove: 0 },
                     { rowMove: 0, columnMove: 1 }, { rowMove: 0, columnMove: -1 },
@@ -174,26 +163,34 @@ function createGame() {
                 for (let i = 0; !goal && i <= INIT_VECTORS.length - 2; i = i + 2) {
                     const tokensToLeft = createVector(INIT_VECTORS[i]);
                     const tokensToRight = createVector(INIT_VECTORS[i + 1]);
-                    goal = tokensToLeft.countSameTokens(lastToken, activePlayer, panel) + 1 + tokensToRight.countSameTokens(lastToken, activePlayer, panel) >= 4
+                    goal = tokensToLeft.countSameTokens(lastToken, activePlayer, this) + 1 + tokensToRight.countSameTokens(lastToken, activePlayer, this) >= 4
                 }
                 return goal;
             }
         };
+        function makeSquares() {
+            const ROWS_LENGTH = 6;
+            const COLUMNS_LENGTH = 7;
+            squares = new Array(ROWS_LENGTH);
+            for (let i = 0; i < ROWS_LENGTH; i++) {
+                squares[i] = new Array(COLUMNS_LENGTH);
+            }
+            resetSquares(ROWS_LENGTH, COLUMNS_LENGTH);
+            return squares;
+        }
         function createVector({ rowMove, columnMove }) {
             return {
-                //rowMove: rowMove,
-                //columnMove: columnMove,
-     // los comentados no hacen falta, los metodos pueden acceder a los datos de la cabecera de la función creadora del objeto 
-                countSameTokens: function ({ row, column }, activePlayer, { squares, ROWS_LENGTH, COLUMNS_LENGTH }) {
+                countSameTokens: function (lastToken, activePlayer, panel) {
                     let exit = false;
                     let count = 0;
+                    let row = lastToken.row;//estas dos las puedo evitar si desgrano lastToken en la cabecera
+                    let column = lastToken.column;
                     do {
-
                         row = row + rowMove;
                         column = column + columnMove;
-                        if (row < 0 || column < 0 || row >= ROWS_LENGTH || column >= COLUMNS_LENGTH) {
+                        if (row < 0 || column < 0 || row >= panel.ROWS_LENGTH || column >= panel.COLUMNS_LENGTH) {
                             exit = true;
-                        } else if (squares[row][column] == activePlayer) {
+                        } else if (panel.squares[row][column] == activePlayer) {
                             count++;
                         } else {
                             exit = true;
