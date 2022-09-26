@@ -145,7 +145,7 @@ function createGame() {
                 return row;
             },
             insertToken: function (lastToken, activePlayer) {
-                squares[lastToken.row][lastToken.column] = activePlayer;
+                this.squares[lastToken.row][lastToken.column] = activePlayer;
             },
             tie: function (plays) {
                 MAX_TOKENS = this.ROWS_LENGTH * this.COLUMNS_LENGTH;
@@ -167,22 +167,13 @@ function createGame() {
                 return goal;
             }
         };
-        function makeSquares() {
-            const ROWS_LENGTH = 6;
-            const COLUMNS_LENGTH = 7;
-            squares = new Array(ROWS_LENGTH);
-            for (let i = 0; i < ROWS_LENGTH; i++) {
-                squares[i] = new Array(COLUMNS_LENGTH);
-            }
-            resetSquares(ROWS_LENGTH, COLUMNS_LENGTH);
-            return squares;
-        }
+        
         function createVector({ rowMove, columnMove }) {
             return {
                 countSameTokens: function (lastToken, activePlayer, panel) {
                     let exit = false;
                     let count = 0;
-                    let row = lastToken.row;//estas dos las puedo evitar si desgrano lastToken en la cabecera
+                    let row = lastToken.row;
                     let column = lastToken.column;
                     do {
                         row = row + rowMove;
@@ -199,11 +190,21 @@ function createGame() {
                 }
             };
         }
-        function resetSquares(ROWS_LENGTH, COLUMNS_LENGTH) {
+        function makeSquares() {
+            const ROWS_LENGTH = 6;
+            const COLUMNS_LENGTH = 7;
+            let squares;
+            squares = new Array(ROWS_LENGTH);
+            for (let i = 0; i < ROWS_LENGTH; i++) {
+                squares[i] = new Array(COLUMNS_LENGTH);
+            }
+            resetSquares(ROWS_LENGTH, COLUMNS_LENGTH, squares);
+            return squares;
+        }
+        function resetSquares(ROWS_LENGTH, COLUMNS_LENGTH, squares) {
             for (let i = 0; i < ROWS_LENGTH; i++) {
                 for (let j = 0; j < COLUMNS_LENGTH; j++) {
-                    squares[i][j] = 0;
-    //Porqué tenemos que pasar rows y columns length y no squares?(no funciona si le pasamos squares) no se exactamente que pasa aqui...                    
+                    squares[i][j] = 0;                   
                 }
             }
         }
