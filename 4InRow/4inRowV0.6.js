@@ -90,7 +90,7 @@ function createGame() {
     }
     function createPlayersView() {
         return {
-            PLAYERS_MODE: setGameMode(),//devería estar en players? no se como hacerlo sin que la vista conozca al controlador
+            PLAYERS_MODE: setGameMode(),//devería estar en players? no se como hacerlo sin que el controlador conozca a la vista.
             changeActiveMode: function (plays) {
                 return this.PLAYERS_MODE[plays % 2];
             },
