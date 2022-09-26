@@ -44,7 +44,6 @@ function createGame() {
         players: createPlayers(),
         playersView: createPlayersView(),
         run: function () {
-            this.playersView.setGameMode();
             let plays = 0;
             this.panelView.showSquares(plays, this.panel);
             let win = false;
@@ -91,20 +90,7 @@ function createGame() {
     }
     function createPlayersView() {
         return {
-            PLAYERS_MODE: null,//está aqui por comodidad.. devería estar en el objeto players?
-            setGameMode: function () {
-                const PLAYERS_MODE_OPTIONS = ["Jugador contra Jugador", "Jugador contra Computador", "Computador contra Computador"];
-                let msg = (`\n----- 4inRow -----\ \n\nMODOS DE JUEGO`);
-                for (let i = 0; i < PLAYERS_MODE_OPTIONS.length; i++) {
-                    msg += `\n${i + 1}. ${PLAYERS_MODE_OPTIONS[i]}`;
-                }
-                console.writeln(msg);
-                let index;
-                do {
-                    index = console.readNumber(`Elige un modo de juego (1, 2 o 3): `) - 1;
-                } while (index != 0 && index != 1 && index != 2);
-                this.PLAYERS_MODE = [[manual, manual], [manual, automatic], [automatic, automatic]][index];
-            },
+            PLAYERS_MODE: setGameMode(),//devería estar en players? no se como hacerlo sin que la vista conozca al controlador
             changeActiveMode: function (plays) {
                 return this.PLAYERS_MODE[plays % 2];
             },
@@ -112,6 +98,19 @@ function createGame() {
                 return activeMode(activePlayer);
             },
         };
+        function setGameMode() {
+            const PLAYERS_MODE_OPTIONS = ["Jugador contra Jugador", "Jugador contra Computador", "Computador contra Computador"];
+            let msg = (`\n----- 4inRow -----\ \n\nMODOS DE JUEGO`);
+            for (let i = 0; i < PLAYERS_MODE_OPTIONS.length; i++) {
+                msg += `\n${i + 1}. ${PLAYERS_MODE_OPTIONS[i]}`;
+            }
+            console.writeln(msg);
+            let index;
+            do {
+                index = console.readNumber(`Elige un modo de juego (1, 2 o 3): `) - 1;
+            } while (index != 0 && index != 1 && index != 2);
+            return [[manual, manual], [manual, automatic], [automatic, automatic]][index];
+        }
         function manual(activePlayer) {
             return console.readNumber(`jugador ${activePlayer}, Escoge una columna (0-6)`);
         }
@@ -204,6 +203,7 @@ function createGame() {
             for (let i = 0; i < ROWS_LENGTH; i++) {
                 for (let j = 0; j < COLUMNS_LENGTH; j++) {
                     squares[i][j] = 0;
+    //Porqué tenemos que pasar rows y columns length y no squares?(no funciona si le pasamos squares) no se exactamente que pasa aqui...                    
                 }
             }
         }
