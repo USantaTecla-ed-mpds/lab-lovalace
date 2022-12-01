@@ -1,0 +1,243 @@
+<!doctype html>
+<HTML>
+<HEAD>
+<meta charset="utf-8"/>
+<TITLE>Conecta4</TITLE>
+ <meta name="author" content="Alberto">
+ <!-- style.css-file -->
+ 
+<style type="text/css">
+
+
+.tablero{
+
+	padding: 35px ;
+
+}
+
+table{
+margin-left: auto;
+margin-right: auto;
+		padding: 5px ;
+ background-color: rgb(93,123,183);
+}	
+</style>
+</HEAD>
+ <!-- primera versión ligera y funcional pero desordenada. Para el javascript he simplificado un ejercicio con funciones constructoras en vs, he creado y modificado este archivo con notepad++ y hecho pruebas con wamp. como se hace desde VS? -->
+  <!-- lo interesante es draw() y closeButtons() que formarán parte de la vista html junto con todos los alerts más adelante. si presento este código es solo por si algun fragmento en esas funciones y botones soluciona las dudas de alguien -->
+<BODY>
+<div class="tablero">
+<table >
+<tr>
+	<th><input type="button" class="place" onclick="game.setColumn(0);" value= "insert" /></th>
+	<th><input type="button" class="place"  onclick="game.setColumn(1);" value= "insert" /></th>
+	<th><input type="button" class="place"  onclick="game.setColumn(2);" value= "insert" /></th>
+	<th><input type="button" class="place" onclick="game.setColumn(3);" value= "insert" /></th>
+	<th><input type="button" class="place"  onclick="game.setColumn(4);" value= "insert" /></th>
+	<th><input type="button" class="place"  onclick="game.setColumn(5);" value= "insert" /></th>
+	<th><input type="button" class="place"  onclick="game.setColumn(6);" value= "insert" /></th>
+</tr>
+<tr>
+	<td id="50"><img src="./empty.svg"/></td>
+	<td id="51"><img src="./empty.svg"/></td>
+	<td id="52"><img src="./empty.svg"/></td>
+	<td id="53"><img src="./empty.svg"/></td>
+	<td id="54"><img src="./empty.svg"/></td>
+	<td id="55"><img src="./empty.svg"/></td>
+	<td id="56"><img src="./empty.svg"/></td>
+</tr>
+<tr>
+	<td id="40"><img src="./empty.svg"/></td>
+	<td id="41"><img src="./empty.svg"/></td>
+	<td id="42"><img src="./empty.svg"/></td>
+	<td id="43"><img src="./empty.svg"/></td>
+	<td id="44"><img src="./empty.svg"/></td>
+	<td id="45"><img src="./empty.svg"/></td>
+	<td id="46"><img src="./empty.svg"/></td>
+</tr>
+<tr>
+	<td id="30"><img src="./empty.svg"/></td>
+	<td id="31"><img src="./empty.svg"/></td>
+	<td id="32"><img src="./empty.svg"/></td>
+	<td id="33"><img src="./empty.svg"/></td>
+	<td id="34"><img src="./empty.svg"/></td>
+	<td id="35"><img src="./empty.svg"/></td>
+	<td id="36"><img src="./empty.svg"/></td>
+</tr>
+<tr>
+	<td id="20"><img src="./empty.svg"/></td>
+	<td id="21"><img src="./empty.svg"/></td>
+	<td id="22"><img src="./empty.svg"/></td>
+	<td id="23"><img src="./empty.svg"/></td>
+	<td id="24"><img src="./empty.svg"/></td>
+	<td id="25"><img src="./empty.svg"/></td>
+	<td id="26"><img src="./empty.svg"/></td>
+</tr>
+<tr>
+	<td id="10"><img src="./empty.svg"/></td>
+	<td id="11"><img src="./empty.svg"/></td>
+	<td id="12"><img src="./empty.svg"/></td>
+	<td id="13"><img src="./empty.svg"/></td>
+	<td id="14"><img src="./empty.svg"/></td>
+	<td id="15"><img src="./empty.svg"/></td>
+	<td id="16"><img src="./empty.svg"/></td>
+</tr>
+<tr>
+	<td id="00"><img src="./empty.svg"/></td>
+	<td id="01"><img src="./empty.svg"/></td>
+	<td id="02"><img src="./empty.svg"/></td>
+	<td id="03"><img src="./empty.svg"/></td>
+	<td id="04"><img src="./empty.svg"/></td>
+	<td id="05"><img src="./empty.svg"/></td>
+	<td id="06"><img src="./empty.svg"/></td>
+</tr>
+<tfoot>
+<td colspan ="7" align ="center"><input type="button" onclick="location.reload();"  value="Reset" /></td>
+</tfoot>
+
+</table>
+
+</div>
+<script>
+//board[fila][columna]--Alberto--
+const game=createGame();
+function createGame() {
+    return {
+        panel: createPanel(),
+        players: createPlayers(),
+        plays:0,
+        setColumn:function(column){
+			let win=false;
+            activePlayer = this.players.changeActivePlayer(this.plays);
+            if(!this.panel.checkValidColumn(column)){
+				alert ("columna llena");
+				return;
+            }
+                let row = this.panel.firstEmptyRow(column);
+                let lastToken = { row, column };
+                this.panel.insertToken(lastToken, activePlayer);
+                draw(lastToken, this.plays);
+				this.plays++;
+                win = this.panel.isWiner(lastToken, activePlayer);
+           if(win ){
+		   const winMessage=`El jugador ${activePlayer} ha ganado la partida.`;
+			alert (winMessage);
+			closeButtons();
+		   }else if (this.panel.tie(this.plays)){
+		   alert ("has empatado");
+		   closeButtons();
+           }
+		}
+    
+    };
+	function closeButtons(){
+		const insertButtons = document.querySelectorAll('.place');
+		insertButtons.forEach(button => button.disabled = true);
+	}
+    function draw(lastToken, plays){
+        const imagesRoutes=["yellow.svg", "red.svg"];
+        let route= imagesRoutes[plays%2];
+        let idTd=""+lastToken.row+lastToken.column;
+        let casilla=document.getElementById(idTd);
+        casilla.innerHTML="";
+        var imagen= new Image();
+        imagen.src=route;
+        casilla.appendChild(imagen);
+	}
+	function createPlayers() {
+        return {
+            PLAYERS: [1, 2],
+            changeActivePlayer: function (plays) {
+                return this.PLAYERS[plays % 2];
+            }
+        };
+    }
+    function createPanel() {
+        return {
+            squares: makeSquares(),
+            ROWS_LENGTH: 6,
+            COLUMNS_LENGTH: 7,
+
+            checkValidColumn: function (column) {
+
+                return  this.squares[this.ROWS_LENGTH - 1][column] === 0;
+            },
+            firstEmptyRow: function (column) {
+                let found;
+                let row;
+                for (i = 0; !found || i > this.ROWS_LENGTH; i++) {
+                    row = i;
+                    found = this.squares[i][column] == 0;
+                }
+                return row;
+            },
+            insertToken: function (lastToken, activePlayer) {
+                this.squares[lastToken.row][lastToken.column] = activePlayer;
+            },
+            tie: function (plays) {
+                MAX_TOKENS = this.ROWS_LENGTH * this.COLUMNS_LENGTH;
+                return MAX_TOKENS === plays;
+            },
+            isWiner: function (lastToken, activePlayer) {
+                const INIT_VECTORS =
+                    [{ rowMove: -1, columnMove: 0 }, { rowMove: 1, columnMove: 0 },
+                    { rowMove: 0, columnMove: 1 }, { rowMove: 0, columnMove: -1 },
+                    { rowMove: -1, columnMove: -1 }, { rowMove: 1, columnMove: 1 },
+                    { rowMove: -1, columnMove: 1 }, { rowMove: 1, columnMove: -1 }
+                    ]
+                let goal = false;
+                for (let i = 0; !goal && i <= INIT_VECTORS.length - 2; i = i + 2) {
+                    const tokensToLeft = createVector(INIT_VECTORS[i]);
+                    const tokensToRight = createVector(INIT_VECTORS[i + 1]);
+                    goal = tokensToLeft.countSameTokens(lastToken, activePlayer, this) + 1 + tokensToRight.countSameTokens(lastToken, activePlayer, this) >= 4
+                }
+                return goal;
+            }
+        };
+        
+        function createVector({ rowMove, columnMove }) {
+            return {
+                countSameTokens: function (lastToken, activePlayer, panel) {
+                    let exit = false;
+                    let count = 0;
+                    let row = lastToken.row;
+                    let column = lastToken.column;
+                    do {
+                        row = row + rowMove;
+                        column = column + columnMove;
+                        if (row < 0 || column < 0 || row >= panel.ROWS_LENGTH || column >= panel.COLUMNS_LENGTH) {
+                            exit = true;
+                        } else if (panel.squares[row][column] == activePlayer) {
+                            count++;
+                        } else {
+                            exit = true;
+                        }
+                    } while (!exit)
+                    return count;
+                }
+            };
+        }
+        function makeSquares() {
+            const ROWS_LENGTH = 6;
+            const COLUMNS_LENGTH = 7;
+            let squares;
+            squares = new Array(ROWS_LENGTH);
+            for (let i = 0; i < ROWS_LENGTH; i++) {
+                squares[i] = new Array(COLUMNS_LENGTH);
+            }
+            resetSquares(ROWS_LENGTH, COLUMNS_LENGTH, squares);
+            return squares;
+        }
+        function resetSquares(ROWS_LENGTH, COLUMNS_LENGTH, squares) {
+            for (let i = 0; i < ROWS_LENGTH; i++) {
+                for (let j = 0; j < COLUMNS_LENGTH; j++) {
+                    squares[i][j] = 0;                   
+                }
+            }
+        }
+    }
+}
+</script>
+</BODY>
+</HTML>
+
