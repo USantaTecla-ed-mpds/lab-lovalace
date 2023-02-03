@@ -31,7 +31,7 @@ public class Date {
 
     public void addYears(int year){}
 
-    public String dayOfTheeek(){}
+    public String dayOfTheweek(){}
 
     public boolean isLeapYear(){}
 
@@ -41,6 +41,6 @@ public class Date {
 
     public boolean equals(Date date){}
 
-    public int compareDates(Date date){}
+    public int compareDates(Date date){} //Compares two dates and returns a value indicating whether one is less than, equal to, or greater than the other (-1, 0, 1).
 }
 
