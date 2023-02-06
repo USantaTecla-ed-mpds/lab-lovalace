@@ -1,27 +1,51 @@
+import java.lang.Math;
+
 public class Coordinate {
     
-    private int CoordinateX;
-    private int CoordinateY;
+    private int coordinateX;
+    private int coordinateY;
 
     //Constructors
-    public Coordinate(){} //Default constructor that inicializate Coordinate in (0,0)
+    public Coordinate(){
+        coordinateX = 0;
+        coordinateY = 0;
+    } 
     
-    public Coordinate(int coordinateX, int coordinateY){} 
+    public Coordinate(int coordinateX, int coordinateY){
+        this.coordinateX = coordinateX;
+        this.coordinateY = coordinateY;
+    } 
 
     //Methods
-    public void setCoordinateX(int coordinateX) {}
+    public void setCoordinateX(int coordinateX) {
+        this.coordinateX = coordinateX;
+    }
 
-    public void setCoordinateY(int coordinateY) {}
+    public void setCoordinateY(int coordinateY) {
+        this.coordinateY = coordinateY;
+    }
 
-    public int getCoordinateX(){}
+    public int getCoordinateX(){
+        return coordinateX;
+    }
 
-    public int getCoordinateY(){}
+    public int getCoordinateY(){
+        return coordinateY;
+    }
 
-    public void move(int x, int y){}
+    public double getDistance(Coordinate coordinate){
+       return Math.sqrt(Math.pow((coordinate.coordinateY - this.coordinateY), 2) + Math.pow((coordinate.coordinateX - this.coordinateX), 2));
+    }
 
-    public int distance(Coordinate coordinate){}
+    public Coordinate moved(Coordinate coordinate){
+        return new Coordinate(coordinateX + coordinate.coordinateX, coordinateY + coordinate.coordinateY);
+    }
 
-    public void addCoordinate(Coordinate coordinate){}
+    public boolean equals(Coordinate coordinate){
+        return coordinateX == coordinate.coordinateX && coordinateY == coordinate.coordinateX;
+    }
 
-    public Coordinate clone(){}
+    public Coordinate clone(){
+        return new Coordinate(this.coordinateX, this.coordinateY);
+    }
 }

@@ -25,11 +25,11 @@ public class Date {
 
     public int getYear(){}
 
-    public void addDays(int days){}
+    public Date addDays(int days){}
 
-    public void addMonths(int month){}
+    public Date addMonths(int month){}
 
-    public void addYears(int year){}
+    public Date addYears(int year){}
 
     public String dayOfTheweek(){}
 
