@@ -2,50 +2,49 @@ import java.lang.Math;
 
 public class Coordinate {
     
-    private int coordinateX;
-    private int coordinateY;
+    private int x;
+    private int y;
 
     //Constructors
     public Coordinate(){
-        coordinateX = 0;
-        coordinateY = 0;
+        this(0, 0);
     } 
     
-    public Coordinate(int coordinateX, int coordinateY){
-        this.coordinateX = coordinateX;
-        this.coordinateY = coordinateY;
+    public Coordinate(int x, int y){
+        this.x = x;
+        this.y = y;
     } 
 
     //Methods
-    public void setCoordinateX(int coordinateX) {
-        this.coordinateX = coordinateX;
+    public void setX(int coordinateX) {
+        this.x = coordinateX;
     }
 
-    public void setCoordinateY(int coordinateY) {
-        this.coordinateY = coordinateY;
+    public void setY(int coordinateY) {
+        this.y = coordinateY;
     }
 
-    public int getCoordinateX(){
-        return coordinateX;
+    public int getX(){
+        return this.x;
     }
 
-    public int getCoordinateY(){
-        return coordinateY;
+    public int getY(){
+        return this.y;
     }
 
     public double getDistance(Coordinate coordinate){
-       return Math.sqrt(Math.pow((coordinate.coordinateY - this.coordinateY), 2) + Math.pow((coordinate.coordinateX - this.coordinateX), 2));
+       return Math.sqrt(Math.pow((coordinate.y - this.y), 2) + Math.pow((coordinate.x - this.x), 2));
     }
 
     public Coordinate moved(Coordinate coordinate){
-        return new Coordinate(coordinateX + coordinate.coordinateX, coordinateY + coordinate.coordinateY);
+        return new Coordinate(x + coordinate.x, y + coordinate.y);
     }
 
     public boolean equals(Coordinate coordinate){
-        return coordinateX == coordinate.coordinateX && coordinateY == coordinate.coordinateX;
+        return x == coordinate.x && y == coordinate.x;
     }
 
     public Coordinate clone(){
-        return new Coordinate(this.coordinateX, this.coordinateY);
+        return new Coordinate(this.x, this.y);
     }
 }
