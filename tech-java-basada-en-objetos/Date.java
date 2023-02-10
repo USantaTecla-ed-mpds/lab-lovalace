@@ -2,6 +2,8 @@ import java.time.LocalDate;
 
 public class Date {
 
+    private static final int[] DAYS_PER_MONTH = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
     private int day;
     private int month;
     private int year;
@@ -22,7 +24,18 @@ public class Date {
 
 
     //Methods
-    public void setDay(int day){}
+    public void setDay(int day){
+
+        if(this.month == 2 && Date.isLeapYear(this.year)){        
+            if(1 >= day && day <= 29){
+                this.day = day;
+            }
+        }
+
+        if( 1 >= day && day >= DAYS_PER_MONTH[this.month - 1]){
+            this.day = day;
+        }
+    }
 
     public void setMonth(int month){}
 
@@ -56,10 +69,6 @@ public class Date {
         return null;
     }
 
-    public boolean isLeapYear(){
-        return false;
-    }
-
     //Return number of days between dates
     public int difference(Date date){
         return 0;
@@ -83,6 +92,14 @@ public class Date {
     }
 
     //Static methods
+    public static boolean isLeapYear(int year){
+        boolean res = false;
+        if ((year % 4 == 0) && ((year % 100 != 0) || (year % 400 == 0))){
+            res = true;
+        }
+        return res;
+    }
+
     public static boolean isValidDate(Date date){
         return false;
     };
