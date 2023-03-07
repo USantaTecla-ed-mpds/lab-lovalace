@@ -1,0 +1,47 @@
+@startuml
+class ServicesContract
+abstract class Menu
+abstract class DynamicMenu
+abstract class IterativeMenu
+abstract class QuitMenu
+class ServicesContractMenu
+abstract class Option
+abstract class ServicesContractOption
+class CancelServicesContractOption
+class CostServicesContractOption
+class EnlargeServicesContractOption
+class ListServicesContractOption
+class PrintServicesContractOption
+class QuitOption
+class ShiftServicesContractOption
+class Date
+class Month
+class Format
+class Console
+
+Option <|.. ServicesContractOption
+
+ServicesContractOption <|.. CancelServicesContractOption
+ServicesContractOption <|.. CostServicesContractOption
+ServicesContractOption <|.. EnlargeServicesContractOption
+ServicesContractOption <|.. ListServicesContractOption
+ServicesContractOption <|.. PrintServicesContractOption 
+ServicesContractOption <|.. QuitOption 
+ServicesContractOption <|.. ShiftServicesContractOption 
+
+
+class Menu {
+ - String title
+}
+
+
+Menu <|.. QuitMenu
+QuitMenu <|.. IterativeMenu
+IterativeMenu <|.. DynamicMenu
+DynamicMenu <|.. ServicesContractMenu 
+
+
+Menu -->"0..*" Option
+ServicesContractMenu --> ServicesContract
+
+@enduml
