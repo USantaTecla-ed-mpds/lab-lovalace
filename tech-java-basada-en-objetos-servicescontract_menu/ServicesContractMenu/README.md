@@ -10,12 +10,6 @@ Ejercicio: ServicesContractMenu
 
 Aplicar los conceptos de menu a un modelo de ServiceContract
 
-## NOTA
-
-El código se ha consultado de las siguientes fuentes:
-
-- https://github.com/USantaTecla-tech-java/src/tree/main/src/main/java/es/usantatecla/aX_managers/services/a3_enums
-
-- https://github.com/USantaTecla-tech-java/src
-
-Contenido Creado por Luís Fernández. EscuelaIT
+## Diagrama de clases del Modelo de Dominio
+![Alt text](https://raw.github.com/potherca-blog/StackOverflow/master/question.13808020.include-an-svg-hosted-on-github-in-markdown/controllers_brief.svg?sanitize=true)
+<img src="https://raw.github.com/potherca-blog/StackOverflow/master/question.13808020.include-an-svg-hosted-on-github-in-markdown/controllers_brief.svg?sanitize=true">
