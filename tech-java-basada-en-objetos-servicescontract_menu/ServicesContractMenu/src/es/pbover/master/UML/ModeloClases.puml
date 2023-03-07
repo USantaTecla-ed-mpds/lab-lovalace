@@ -40,7 +40,7 @@ abstract class Menu {
  #execChoosedOption()
  #add(Option option)
  #removeOptions()
- #hasOption(Option option)
+ #boolean hasOption(Option option)
 }
 
 abstract class QuitMenu {
