@@ -32,16 +32,117 @@ ServicesContractOption <|.. ShiftServicesContractOption
 
 class Menu {
  - String title
+ +interact()
+ #{abstract} addOptions()
+ #interact_()
+ #showTitles()
+ -showTitle()
+ #execChoosedOption()
+ #add(Option option)
+ #removeOptions()
+ #hasOption(Option option)
 }
 
+abstract class QuitMenu {
+ #showTitles()
+ #addquitOption()
+ #boolean isExecutedquitOption()
+}
+
+abstract class IterativeMenu {
+ +interact()
+}
+
+abstract class DynamicMenu {
+ +interact()
+}
+
+abstract class Option {
+ +title
+ +abstract interact()
+ +showTitle(int index)
+ #String getTitle()
+}
+
+abstract class QuitOption {
+ +boolean executed
+ +interact()
+ +boolean isExecuted()
+}
+
+abstract class ServicesContractOption {
+ #ServicesContract servicesContract
+}
+
+class CancelServicesContractOption
+{
+  +interact()
+}
+
+class CostServicesContractOption
+{
+  +interact()
+}
+
+class EnlargeServicesContractOption
+{
+  +interact()
+}
+
+class ListServicesContractOption
+{
+  +interact()
+}
+class PrintServicesContractOption
+{
+  +interact()
+}
+class ShiftServicesContractOption
+{
+  +interact()
+}
+
+ QuitMenu --> QuitOption
 
 Menu <|.. QuitMenu
 QuitMenu <|.. IterativeMenu
 IterativeMenu <|.. DynamicMenu
 DynamicMenu <|.. ServicesContractMenu 
-
+QuitOption <|.. Option
 
 Menu -->"0..*" Option
 ServicesContractMenu --> ServicesContract
+ServicesContractOption --> ServicesContract
+
+
+ServicesContract ..> Console
+Menu ..> Console
+CancelServicesContractOption ..> Console
+CostServicesContractOption ..> Console
+EnlargeServicesContractOption ..> Console
+ListServicesContractOption ..> Console
+Option ..> Console
+ShiftServicesContractOption ..> Console
+Interval ..> Console
+Date ..> Console
+
+ServicesContract ..> Interval
+
+Date ..> Month
+ServicesContract ..> Month
+
+ServicesContract ..> Date
+CancelServicesContractOption ..> Date
+EnlargeServicesContractOption ..> Date
+ShiftServicesContractOption ..> Date
+Format ..> Date
+
+Date ..> Format
+Month ..> Format
+
+
+
+
+
 
 @enduml
