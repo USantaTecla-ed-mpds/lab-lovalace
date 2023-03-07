@@ -30,7 +30,7 @@ ServicesContractOption <|.. QuitOption
 ServicesContractOption <|.. ShiftServicesContractOption 
 
 
-class Menu {
+abstract class Menu {
  - String title
  +interact()
  #{abstract} addOptions()
