@@ -108,7 +108,7 @@ Menu <|.. QuitMenu
 QuitMenu <|.. IterativeMenu
 IterativeMenu <|.. DynamicMenu
 DynamicMenu <|.. ServicesContractMenu 
-QuitOption <|.. Option
+Option <|.. QuitOption
 
 Menu -->"0..*" Option
 ServicesContractMenu --> ServicesContract
