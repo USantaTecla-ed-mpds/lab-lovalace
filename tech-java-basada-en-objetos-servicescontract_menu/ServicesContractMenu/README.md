@@ -11,5 +11,7 @@ Ejercicio: ServicesContractMenu
 Aplicar los conceptos de menu a un modelo de ServiceContract
 
 ## Diagrama de clases del Modelo de Dominio
-![Alt text](https://raw.github.com/potherca-blog/StackOverflow/master/question.13808020.include-an-svg-hosted-on-github-in-markdown/controllers_brief.svg?sanitize=true)
-<img src="https://raw.github.com/potherca-blog/StackOverflow/master/question.13808020.include-an-svg-hosted-on-github-in-markdown/controllers_brief.svg?sanitize=true">
+![Alt text](https://raw.githubusercontent.com/USantaTecla-ed-mpds/lab-lovalace/master/tech-java-basada-en-objetos-servicescontract_menu/ServicesContractMenu/src/es/pbover/master/UML/ModeloClases.svg)
+<img src="https://raw.githubusercontent.com/USantaTecla-ed-mpds/lab-lovalace/master/tech-java-basada-en-objetos-servicescontract_menu/ServicesContractMenu/src/es/pbover/master/UML/ModeloClases.svg">
+
+
