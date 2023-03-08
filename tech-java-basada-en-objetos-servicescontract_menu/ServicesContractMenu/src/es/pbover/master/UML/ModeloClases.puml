@@ -125,7 +125,7 @@ ShiftServicesContractOption ..> Console
 Interval ..> Console
 Date ..> Console
 
-ServicesContract ..> Interval
+ServicesContract *--> Interval
 
 Date ..> Month
 ServicesContract ..> Month
