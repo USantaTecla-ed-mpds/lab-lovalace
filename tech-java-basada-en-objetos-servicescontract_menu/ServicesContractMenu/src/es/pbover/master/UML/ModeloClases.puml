@@ -102,7 +102,7 @@ class ShiftServicesContractOption
   +interact()
 }
 
- QuitMenu --> QuitOption
+QuitMenu --> QuitOption
 
 Menu <|.. QuitMenu
 QuitMenu <|.. IterativeMenu
@@ -110,7 +110,7 @@ IterativeMenu <|.. DynamicMenu
 DynamicMenu <|.. ServicesContractMenu 
 Option <|.. QuitOption
 
-Menu -->"0..*" Option
+Menu o-- Option
 ServicesContractMenu --> ServicesContract
 ServicesContractOption --> ServicesContract
 
