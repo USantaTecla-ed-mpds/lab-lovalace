@@ -110,7 +110,7 @@ IterativeMenu <|.. DynamicMenu
 DynamicMenu <|.. ServicesContractMenu 
 Option <|.. QuitOption
 
-Menu o-- Option
+Menu o--"*" Option
 ServicesContractMenu --> ServicesContract
 ServicesContractOption --> ServicesContract
 
