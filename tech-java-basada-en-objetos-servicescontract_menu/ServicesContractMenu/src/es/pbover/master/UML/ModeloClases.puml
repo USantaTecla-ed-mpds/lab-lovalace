@@ -59,7 +59,7 @@ abstract class DynamicMenu {
 
 abstract class Option {
  +title
- +abstract interact()
+ +{abstract} interact()
  +showTitle(int index)
  #String getTitle()
 }
@@ -113,7 +113,6 @@ Option <|.. QuitOption
 Menu o--"*" Option
 ServicesContractMenu --> ServicesContract
 ServicesContractOption --> ServicesContract
-
 
 ServicesContract ..> Console
 Menu ..> Console
