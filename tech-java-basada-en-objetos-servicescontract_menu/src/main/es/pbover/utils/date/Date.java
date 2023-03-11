@@ -148,7 +148,7 @@ public class Date {
 	}
 
 	public static void main(String[] args) {
-		Console console = new Console();
+		Console console = Console.getInstance();
 		// Fecha fecha = new Fecha(31, Mes.MAYO, 2010);
 		// gestorIO.escribirLinea(fecha.toString());
 		// fecha = fecha.siguiente();

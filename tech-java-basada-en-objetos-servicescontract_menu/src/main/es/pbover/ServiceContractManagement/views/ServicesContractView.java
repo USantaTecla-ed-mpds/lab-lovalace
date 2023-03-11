@@ -14,7 +14,7 @@ public class ServicesContractView {
 	}
 
 	public void writeln() {
-		Console console = new Console();
+		Console console = Console.getInstance();
 		console.writeln("Contrato de Servicios: " + this.servicesContract.getYear());
 		Date date = new Date(1, Month.JANUARY, this.servicesContract.getYear());
 		for (int i = 0; i < this.servicesContract.getTimetable().length; i++) {
