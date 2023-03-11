@@ -11,7 +11,7 @@ public class Console {
 		return Console.instance;
 	}
 
-	public Console() {
+	private Console() {
 	}
 
 	private BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
